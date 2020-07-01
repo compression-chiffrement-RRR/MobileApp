@@ -4,40 +4,6 @@ import 'dart:convert' show json, base64, ascii;
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/services.dart';
 
-class CounterStorage {
-  Future<String> get _localPath async {
-    final directory = await getExternalStorageDirectory();
-
-    return directory.path;
-  }
-
-  Future<File> get _localFile async {
-    final path = await _localPath;
-    return File('$path/counter.txt');
-  }
-
-  Future<int> readCounter() async {
-    try {
-      final file = await _localFile;
-
-      // Read the file
-      String contents = await file.readAsString();
-
-      return int.parse(contents);
-    } catch (e) {
-      // If encountering an error, return 0
-      return 0;
-    }
-  }
-
-  Future<File> writeCounter(int counter) async {
-    final file = await _localFile;
-
-    // Write the file
-    return file.writeAsString('$counter');
-  }
-}
-
 class FilesPage extends StatefulWidget {
 //  UploadPage(this.jwt, this.payload);
 //
@@ -78,7 +44,7 @@ class _FilesPageState extends State<FilesPage>{
   }
 
   void _openFileExplorer() async {
-    if (_pickingType != FileType.CUSTOM || _hasValidMime) {
+    if (_pickingType != FileType.custom || _hasValidMime) {
       setState(() => _loadingPath = true);
       try {
         if (_multiPick) {
