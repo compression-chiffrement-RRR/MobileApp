@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:mobileappflutter/View/files.dart';
+import 'package:mobileappflutter/View/friends.dart';
+import 'package:mobileappflutter/View/home.dart';
 import 'dart:convert' show json, base64, ascii;
 import 'dart:convert';
+import 'upload.dart';
 
 class Navbar extends StatefulWidget {
   Navbar(this.jwt, this.payload);
@@ -20,17 +24,33 @@ class Navbar extends StatefulWidget {
 
 
   @override
-  _NavbarState createState() => _NavbarState();
+  _NavbarState createState() => _NavbarState(jwt, payload);
 }
 
 class _NavbarState extends State<Navbar>{
+
+  _NavbarState(this.jwt, this.payload);
+
+  factory _NavbarState.fromBase64(String jwt) =>
+      _NavbarState(
+          jwt,
+          json.decode(
+              ascii.decode(
+                  base64.decode(base64.normalize(jwt.split(".")[1]))
+              )
+          )
+      );
+
+  final String jwt;
+  final Map<String, dynamic> payload;
+
   int _currentIndex = 0;
 
-  final tabs = [
-    Center(child: Text('Home')),
-    Center(child: Text('Upload')),
-    Center(child: Text('Files')),
-    Center(child: Text('Friends')),
+  final StatefulWidgetBuilder = [
+    HomePage(),
+    UploadPage(),
+    FilesPage(),
+    FriendPage()
   ];
 
   @override
@@ -38,8 +58,9 @@ class _NavbarState extends State<Navbar>{
     return Scaffold(
       appBar: AppBar(
         title: Text('CypheNet'),
+        backgroundColor: Colors.black,
       ),
-      body: tabs[_currentIndex],
+      body: StatefulWidgetBuilder[_currentIndex],
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
         type: BottomNavigationBarType.fixed,
