@@ -1,12 +1,8 @@
-import 'dart:io';
-
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'dart:convert' show json, base64, ascii;
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'env.dart';
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/services.dart';
 
 enum CompressionType { C1, C2, none }
@@ -30,6 +26,8 @@ class UploadPage extends StatefulWidget {
 //  final Map<String, dynamic> payload;
 
 
+
+
   @override
   _UploadPageState createState() => _UploadPageState();
 }
@@ -43,12 +41,33 @@ class _UploadPageState extends State<UploadPage>{
   bool _hasValidMime = false;
   FileType _pickingType = FileType.any;
 
-  CompressionType _compressionType = CompressionType.none;
-  EncryptionType _encryptionType = EncryptionType.none;
-
+  String compressionValue = 'none';
+  String encryptionValue = 'none';
+  
   @override
   void initState() {
     super.initState();
+  }
+
+  Future<String> attemptUpload(String compression, String chiffrement, String path) async {
+    final body = jsonEncode({
+      "accountUuid": "971f685c-fdf9-4423-ae65-0d2ca533b563",
+      "types": [
+        {"name": compression, "password": "superpassword"},
+        {"name": chiffrement}
+        ]
+    });
+    Map<String,String> headers = {'Content-Type': 'application/json; charset=UTF-8'};
+    var res = await http.post(
+        "$SERVER_IP/api/worker/uploadFile",
+        headers: headers,
+        body: body
+    );
+
+    if(res.statusCode == 200) {
+      return res.headers["authorization"];
+    }
+    return null;
   }
 
   void _openFileExplorer() async {
@@ -79,197 +98,118 @@ class _UploadPageState extends State<UploadPage>{
     }
   }
 
-
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: Flex(direction: Axis.vertical,
-          children: <Widget>[
-            ListBody(mainAxis: Axis.vertical,
+        body: ListView(
+          scrollDirection: Axis.vertical,
               children: <Widget>[
                 Container(
-                  child: Card(margin: EdgeInsets.all(16),
+                  child: Card(margin: EdgeInsets.all(4),
                     child: Column(
                       children: <Widget>[
-                        Padding(
-                            padding: EdgeInsets.all(14.0),
-                            child: Text('Compression : ' + '$_compressionType',
-                                style: TextStyle(fontSize: 18))
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                            Radio(
-                              value: CompressionType.C1,
-                              groupValue: _compressionType,
-                              onChanged: (CompressionType value) {
-                                setState(() {
-                                  _compressionType = value;
-                                });
-                              },
-                            ),
-                            Text(
-                              'compress 1',
-                              style: new TextStyle(fontSize: 12.0),
-                            ),
-                            Radio(
-                              value: CompressionType.C2,
-                              groupValue: _compressionType,
-                              onChanged: (CompressionType value) {
-                                setState(() {
-                                  _compressionType = value;
-                                });
-                              },
-                            ),
-                            Text(
-                              'compress 2',
-                              style: new TextStyle(fontSize: 12.0),
-                            ),
-                            Radio(
-                              value: CompressionType.none,
-                              groupValue: _compressionType,
-                              onChanged: (CompressionType value) {
-                                setState(() {
-                                  _compressionType = value;
-                                });
-                              },
-                            ),
-                            Text(
-                              'none',
-                              style: new TextStyle(fontSize: 12.0),
-                            ),
-                          ],
-                        ),
+                        DropdownButton<String>(
+                          value: compressionValue,
+                          icon: Icon(Icons.arrow_downward),
+                          iconSize: 12,
+                          elevation: 16,
+                          style: TextStyle(color: Colors.black),
+                          underline: Container(
+                            height: 2,
+                            color: Colors.deepPurpleAccent,
+                          ),
+                          onChanged: (String newValue) {
+                            setState(() {
+                              compressionValue = newValue;
+                            });
+                          },
+                          items: <String>['none', 'ENCRYPT_AES_128_ECB', 'ENCRYPT_AES_192_ECB','ENCRYPT_AES_256_ECB', 'ENCRYPT_AES_128_CBC', 'ENCRYPT_AES_192_CBC', 'ENCRYPT_AES_256_CBC']
+                            .map<DropdownMenuItem<String>>((String value) {
+                              return DropdownMenuItem<String>(
+                                value: value,
+                                child: Text(value),
+                              );
+                          }).toList(),
+                        )
                       ],
                     ),
-                  ),
+                  )
                 ),
                 Container(
-                  child: Card(margin: EdgeInsets.all(16),
-                    child:Column(
-                      children: <Widget>[
-                        Padding(
-                            padding: EdgeInsets.all(14.0),
-                            child: Text('Chiffrement : ' + '$_encryptionType',
-                                style: TextStyle(fontSize: 18))
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                            Radio(
-                              value: EncryptionType.E1,
-                              groupValue: _encryptionType,
-                              onChanged: (EncryptionType value) {
-                                setState(() {
-                                  _encryptionType = value;
-                                });
-                              },
-                            ),
-                            Text(
-                              'Chiff 1',
-                              style: new TextStyle(fontSize: 12.0),
-                            ),
-                            Radio(
-                              value: EncryptionType.E2,
-                              groupValue: _encryptionType,
-                              onChanged: (EncryptionType value) {
-                                setState(() {
-                                  _encryptionType = value;
-                                });
-                              },
-                            ),
-                            Text(
-                              'Chiff 2',
-                              style: new TextStyle(fontSize: 12.0),
-                            ),
-                            Radio(
-                              value: EncryptionType.none,
-                              groupValue: _encryptionType,
-                              onChanged: (EncryptionType value) {
-                                setState(() {
-                                  _encryptionType = value;
-                                });
-                              },
-                            ),
-                            Text(
-                              'none',
-                              style: new TextStyle(fontSize: 12.0),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                Container(
-                  child: Card(margin: EdgeInsets.all(16),
-                      child:Column(
+                  child: Card(margin: EdgeInsets.all(4),
+                      child: Column(
                         children: <Widget>[
-                            Center(
-                                child: Column(
-                                  children: <Widget>[
-                                    new Padding(
-                                      padding: const EdgeInsets.only(top: 50.0, bottom: 20.0),
-                                      child: new RaisedButton(
-                                        onPressed: () => _openFileExplorer(),
-                                        child: new Text("Open file picker"),
-                                      ),
-                                    ),
-                                    new Builder(
-                                      builder: (BuildContext context) =>
-                                      _loadingPath
-                                          ? Padding(
-                                          padding: const EdgeInsets.only(bottom: 10.0),
-                                          child: const CircularProgressIndicator())
-                                          : _path != null || _paths != null
-                                          ? new Container(
-                                        padding: const EdgeInsets.only(bottom: 30.0),
-                                        height: MediaQuery
-                                            .of(context)
-                                            .size
-                                            .height * 0.50,
-                                        child: new Scrollbar(
-                                            child: new ListView.separated(
-                                              itemCount: _paths != null && _paths.isNotEmpty
-                                                  ? _paths.length
-                                                  : 1,
-                                              itemBuilder: (BuildContext context, int index) {
-                                                final bool isMultiPath =
-                                                    _paths != null && _paths.isNotEmpty;
-                                                final String name = 'File $index: ' +
-                                                    (isMultiPath
-                                                        ? _paths.keys.toList()[index]
-                                                        : _fileName ?? '...');
-                                                final path = isMultiPath
-                                                    ? _paths.values.toList()[index].toString()
-                                                    : _path;
-
-                                                return new ListTile(
-                                                  title: new Text(
-                                                    name,
-                                                  ),
-                                                  subtitle: new Text(path),
-                                                );
-                                              },
-                                              separatorBuilder:
-                                                  (BuildContext context, int index) =>
-                                              new Divider(),
-                                            )),
-                                      )
-                                          : new Container(),
-                                    ),
-                                  ],
-                                )
+                          new Padding(
+                            padding: const EdgeInsets.only(top: 10.0, bottom: 10.0),
+                            child: new RaisedButton(
+                              onPressed: () => _openFileExplorer(),
+                              child: new Text("Open file picker"),
                             ),
+                          ),
+                          new Builder(
+                            builder: (BuildContext context) =>
+                            _loadingPath
+                                ? Padding(
+                                  padding: const EdgeInsets.only(bottom: 10.0),
+                                    child: const CircularProgressIndicator())
+                                    : _path != null || _paths != null
+                                ? new Container(
+                                  padding: const EdgeInsets.only(bottom: 10.0),
+                                  height: MediaQuery
+                                      .of(context)
+                                      .size
+                                      .height * 0.50,
+                                      child: new ListView.separated(
+                                        itemCount: _paths != null && _paths.isNotEmpty
+                                            ? _paths.length
+                                            : 1,
+                                        itemBuilder: (BuildContext context, int index) {
+                                          final bool isMultiPath =
+                                              _paths != null && _paths.isNotEmpty;
+                                          final String name = 'File $index: ' +
+                                              (isMultiPath
+                                                  ? _paths.keys.toList()[index]
+                                                  : _fileName ?? '...');
+                                          final path = isMultiPath
+                                              ? _paths.values.toList()[index].toString()
+                                              : _path;
+
+                                          return new Card(margin: EdgeInsets.all(4),
+                                            child:Column(
+                                                children: <Widget>[
+                                                ListTile(
+                                                  title: new Text(name),
+                                                  subtitle: new Text(path),
+                                                )
+                                                ]
+                                          )
+                                          );
+                                        },
+                                        separatorBuilder:
+                                        (BuildContext context, int index) =>
+                                          new Divider(),
+                                  ),
+                            )
+                                : new Container(),
+                          ),
                         ]
                       ),
                   ),
-                )
+                ),
+                Container(
+                    height: 70,
+                    padding: EdgeInsets.fromLTRB(10, 20, 10, 0),
+                    child: RaisedButton(
+                      textColor: Colors.white,
+                      color: Colors.black,
+                      child: Text('uploader'),
+                      onPressed: () async {
+                        attemptUpload(compressionValue, encryptionValue, _path);
+                      },
+                    )),
+
               ],
             )
-          ],
-        )
-    );
+        );
   }
 }
