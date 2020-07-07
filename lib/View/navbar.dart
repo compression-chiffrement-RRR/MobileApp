@@ -57,7 +57,7 @@ class _NavbarState extends State<Navbar>{
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('CypheNet'),
+        title: Text('CypherNet'),
         backgroundColor: Colors.black,
       ),
       body: StatefulWidgetBuilder[_currentIndex],
