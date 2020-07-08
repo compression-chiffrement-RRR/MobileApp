@@ -1,6 +1,4 @@
 import 'dart:convert';
-import 'dart:io';
-
 import 'package:dio/dio.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -16,13 +14,6 @@ class UploadPage extends StatefulWidget {
 }
 
 class _UploadPageState extends State<UploadPage>{
-
-  Future<String> get jwtOrEmpty async {
-    var jwt = await storage.read(key: "jwt");
-    if(jwt == null) return "";
-    return jwt;
-  }
-
   String _fileName;
   String _path;
   Map<String, String> _paths;
@@ -30,43 +21,24 @@ class _UploadPageState extends State<UploadPage>{
   bool _multiPick = false;
   bool _hasValidMime = false;
   FileType _pickingType = FileType.any;
-
   String compressionValue = 'none';
   String encryptionValue = 'none';
-  String path = '';
+  Uri apiUrl = Uri.parse('$SERVER_IP/api/worker/uploadFile');
+
+  Future<String> get jwtOrEmpty async {
+    var jwt = await storage.read(key: "jwt");
+    if(jwt == null) return "";
+    return jwt;
+  }
 
   @override
   void initState() {
     super.initState();
   }
 
-//  Future<String> attemptUpload(String compression, String chiffrement, String path) async {
-//    final body = jsonEncode({
-//      "accountUuid": "971f685c-fdf9-4423-ae65-0d2ca533b563",
-//      "types": [
-//        {"name": compression, "password": "superpassword"},
-//        {"name": chiffrement}
-//        ]
-//    });
-//    Map<String,String> headers = {'Content-Type': 'application/json; charset=UTF-8'};
-//    var res = await http.post(
-//        "$SERVER_IP/api/worker/uploadFile",
-//        headers: headers,
-//        body: body
-//    );
-//
-//    if(res.statusCode == 200) {
-//      return res.headers["authorization"];
-//    }
-//    return null;
-//  }
-
-  Uri apiUrl = Uri.parse('$SERVER_IP/api/worker/uploadFile');
-
   Future<Map<String, dynamic>> attemptUpload(String compression, String chiffrement, String path) async {
     final jwt = await jwtOrEmpty;
-
-    final tasks = {"accountUuid": "971f685c-fdf9-4423-ae65-0d2ca533b563","types": [{"name": compression, "password": "superpassword"}]};
+    final tasks = {"accountUuid": "588703a3-ed37-4e27-8dc5-162938e8ede4","types": [{"name": compression, "password": "superpassword"}]};
 
     Dio dio = new Dio();
 
@@ -89,19 +61,10 @@ class _UploadPageState extends State<UploadPage>{
         print(e.response.headers);
         print(e.response.request);
       } else{
-        // Something happened in setting up or sending the request that triggered an Error
         print(e.request);
         print(e.message);
       }
     }
-  }
-
-  void _resetState() {
-    setState(() {
-      compressionValue = 'none';
-      encryptionValue = 'none';
-      path = '';
-    });
   }
 
   void _openFileExplorer() async {
@@ -143,7 +106,7 @@ class _UploadPageState extends State<UploadPage>{
                     child: Column(
                       children: <Widget>[
                         DropdownButton<String>(
-                          value: compressionValue,
+                          value: encryptionValue,
                           icon: Icon(Icons.arrow_downward),
                           iconSize: 12,
                           elevation: 16,
@@ -154,7 +117,7 @@ class _UploadPageState extends State<UploadPage>{
                           ),
                           onChanged: (String newValue) {
                             setState(() {
-                              compressionValue = newValue;
+                              encryptionValue = newValue;
                             });
                           },
                           items: <String>['none', 'ENCRYPT_AES_128_ECB', 'ENCRYPT_AES_192_ECB','ENCRYPT_AES_256_ECB', 'ENCRYPT_AES_128_CBC', 'ENCRYPT_AES_192_CBC', 'ENCRYPT_AES_256_CBC']
@@ -168,6 +131,37 @@ class _UploadPageState extends State<UploadPage>{
                       ],
                     ),
                   )
+                ),
+                Container(
+                    child: Card(margin: EdgeInsets.all(4),
+                      child: Column(
+                        children: <Widget>[
+                          DropdownButton<String>(
+                            value: compressionValue,
+                            icon: Icon(Icons.arrow_downward),
+                            iconSize: 12,
+                            elevation: 16,
+                            style: TextStyle(color: Colors.black),
+                            underline: Container(
+                              height: 2,
+                              color: Colors.deepPurpleAccent,
+                            ),
+                            onChanged: (String newValue) {
+                              setState(() {
+                                compressionValue = newValue;
+                              });
+                            },
+                            items: <String>['none', 'COMPRESS_LZ78']
+                                .map<DropdownMenuItem<String>>((String value) {
+                              return DropdownMenuItem<String>(
+                                value: value,
+                                child: Text(value),
+                              );
+                            }).toList(),
+                          )
+                        ],
+                      ),
+                    )
                 ),
                 Container(
                   child: Card(margin: EdgeInsets.all(4),
