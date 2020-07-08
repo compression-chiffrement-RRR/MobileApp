@@ -2,37 +2,24 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:mobileappflutter/View/login.dart';
 import 'env.dart';
 import 'package:flutter/services.dart';
 
-enum CompressionType { C1, C2, none }
-enum EncryptionType { E1, E2, none}
-
-
 class UploadPage extends StatefulWidget {
-//  UploadPage(this.jwt, this.payload);
-//
-//  factory UploadPage.fromBase64(String jwt) =>
-//      UploadPage(
-//          jwt,
-//          json.decode(
-//              ascii.decode(
-//                  base64.decode(base64.normalize(jwt.split(".")[1]))
-//              )
-//          )
-//      );
-//
-//  final String jwt;
-//  final Map<String, dynamic> payload;
-
-
-
 
   @override
   _UploadPageState createState() => _UploadPageState();
 }
 
 class _UploadPageState extends State<UploadPage>{
+
+  Future<String> get jwtOrEmpty async {
+    var jwt = await storage.read(key: "jwt");
+    if(jwt == null) return "";
+    return jwt;
+  }
+
   String _fileName;
   String _path;
   Map<String, String> _paths;
@@ -43,31 +30,85 @@ class _UploadPageState extends State<UploadPage>{
 
   String compressionValue = 'none';
   String encryptionValue = 'none';
+  String path = '';
   
   @override
   void initState() {
     super.initState();
   }
 
-  Future<String> attemptUpload(String compression, String chiffrement, String path) async {
-    final body = jsonEncode({
+//  Future<String> attemptUpload(String compression, String chiffrement, String path) async {
+//    final body = jsonEncode({
+//      "accountUuid": "971f685c-fdf9-4423-ae65-0d2ca533b563",
+//      "types": [
+//        {"name": compression, "password": "superpassword"},
+//        {"name": chiffrement}
+//        ]
+//    });
+//    Map<String,String> headers = {'Content-Type': 'application/json; charset=UTF-8'};
+//    var res = await http.post(
+//        "$SERVER_IP/api/worker/uploadFile",
+//        headers: headers,
+//        body: body
+//    );
+//
+//    if(res.statusCode == 200) {
+//      return res.headers["authorization"];
+//    }
+//    return null;
+//  }
+
+  Uri apiUrl = Uri.parse('$SERVER_IP/api/worker/uploadFile');
+
+  Future<Map<String, dynamic>> attemptUpload(String compression, String chiffrement, String path) async {
+    final jwt = await jwtOrEmpty;
+    // Intilize the multipart request
+    final fileUploadRequest = http.MultipartRequest('POST', apiUrl);
+
+    // Attach the file in the request
+    final file = await http.MultipartFile.fromPath(
+        'file', path
+    );
+//    fileUploadRequest.fields['ext'] = mimeTypeData[1];
+
+    final tasks = jsonEncode({
       "accountUuid": "971f685c-fdf9-4423-ae65-0d2ca533b563",
       "types": [
         {"name": compression, "password": "superpassword"},
         {"name": chiffrement}
         ]
     });
-    Map<String,String> headers = {'Content-Type': 'application/json; charset=UTF-8'};
-    var res = await http.post(
-        "$SERVER_IP/api/worker/uploadFile",
-        headers: headers,
-        body: body
-    );
 
-    if(res.statusCode == 200) {
-      return res.headers["authorization"];
+    Map<String,String> headers = {'Authorization': jwt};
+
+    fileUploadRequest.files.add(file);
+    fileUploadRequest.headers.addAll(headers);
+    fileUploadRequest.fields['tasks'] = tasks;
+    print(fileUploadRequest);
+
+
+    try {
+      final streamedResponse = await fileUploadRequest.send();
+      final response = await http.Response.fromStream(streamedResponse);
+      print(response.request);
+      if (response.statusCode != 200) {
+        return null;
+      }
+      final Map<String, dynamic> responseData = json.decode(response.body);
+      _resetState();
+      return responseData;
+    } catch (e) {
+      print(e);
+      return null;
     }
-    return null;
+  }
+
+  void _resetState() {
+    setState(() {
+      compressionValue = 'none';
+      encryptionValue = 'none';
+      path = '';
+    });
   }
 
   void _openFileExplorer() async {
@@ -207,7 +248,6 @@ class _UploadPageState extends State<UploadPage>{
                         attemptUpload(compressionValue, encryptionValue, _path);
                       },
                     )),
-
               ],
             )
         );
