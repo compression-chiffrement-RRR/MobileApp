@@ -91,7 +91,7 @@ class LoginPage extends StatelessWidget {
     return Scaffold(
         appBar: AppBar(
           title: Text('Connexion'),
-          backgroundColor: Colors.black,
+          backgroundColor: Color.fromRGBO(58, 66, 86, 1.0),
         ),
         body: Padding(
           padding: EdgeInsets.all(10),
@@ -114,9 +114,9 @@ class LoginPage extends StatelessWidget {
                   controller: _usernameController,
                   decoration: InputDecoration(
                     border: OutlineInputBorder(),
-                    fillColor: Colors.black,
-                    focusColor: Colors.black,
-                    hoverColor: Colors.black,
+                    fillColor: Color.fromRGBO(58, 66, 86, 1.0),
+                    focusColor: Color.fromRGBO(58, 66, 86, 1.0),
+                    hoverColor: Color.fromRGBO(58, 66, 86, 1.0),
                     labelText: 'Identifiant',
                   ),
                 ),
@@ -137,7 +137,7 @@ class LoginPage extends StatelessWidget {
                   padding: EdgeInsets.fromLTRB(10, 20, 10, 0),
                   child: RaisedButton(
                     textColor: Colors.white,
-                    color: Colors.black,
+                    color: Color.fromRGBO(58, 66, 86, 1.0),
                     child: Text('Me connecter'),
                     onPressed: () async {
                       var username = _usernameController.text;
@@ -184,7 +184,7 @@ class LoginPage extends StatelessWidget {
                 onPressed: (){
                   //forgot password screen
                 },
-                textColor: Colors.black,
+                textColor: Color.fromRGBO(58, 66, 86, 1.0),
                 child: Text('Mot de passe oublier'),
               ),
             ],

@@ -4,7 +4,7 @@ import 'package:mobileappflutter/View/friends.dart';
 import 'package:mobileappflutter/View/home.dart';
 import 'dart:convert' show json, base64, ascii;
 import 'dart:convert';
-import 'upload.dart';
+import 'Account.dart';
 
 class Navbar extends StatefulWidget {
   Navbar(this.jwt, this.payload);
@@ -45,47 +45,51 @@ class _NavbarState extends State<Navbar>{
 
   int _currentIndex = 0;
   final statefulWidgetBuilder = [
-    HomePage(),
-    UploadPage(),
     FilesPage(),
-    FriendPage()
+    FriendPage(),
+    AccountPage(),
+    HomePage(),
   ];
+
+  final topAppBar = AppBar(
+    elevation: 0.1,
+    backgroundColor: Color.fromRGBO(58, 66, 86, 1.0),
+  );
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('CypherNet'),
-        backgroundColor: Colors.black,
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(10.0),
+        child: topAppBar,
       ),
       body: statefulWidgetBuilder[_currentIndex],
       bottomNavigationBar: BottomNavigationBar(
+        iconSize: 30,
+        showSelectedLabels: false,
+        showUnselectedLabels: false,
         currentIndex: _currentIndex,
         type: BottomNavigationBarType.fixed,
-        backgroundColor: Colors.black,
+        backgroundColor: Color.fromRGBO(58, 66, 86, 1.0),
         fixedColor: Colors.white,
         unselectedItemColor: Colors.grey,
         items: [
           BottomNavigationBarItem(
+          icon: Icon(Icons.folder_shared),
+          title: Text('Files'),
+        ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.group),
+            title: Text('Friends'),
+          ),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.person_outline),
+              title: Text('Account'),
+          ),
+          BottomNavigationBarItem(
             icon: Icon(Icons.home),
             title: Text('Home'),
-//            backgroundColor: Colors.black
           ),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.file_upload),
-              title: Text('Upload'),
-              backgroundColor: Colors.white
-          ),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.folder_shared),
-              title: Text('Files'),
-//              backgroundColor: Colors.black
-          ),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.group),
-              title: Text('Friends'),
-//              backgroundColor: Colors.black
-          )
         ],
         onTap: (index){
           setState(() {

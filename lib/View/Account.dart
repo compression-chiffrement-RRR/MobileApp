@@ -1,30 +1,13 @@
 import 'package:flutter/material.dart';
-import 'dart:convert' show json, base64, ascii;
-
 import 'package:flutter/services.dart';
 
-class FilesPage extends StatefulWidget {
-//  UploadPage(this.jwt, this.payload);
-//
-//  factory UploadPage.fromBase64(String jwt) =>
-//      UploadPage(
-//          jwt,
-//          json.decode(
-//              ascii.decode(
-//                  base64.decode(base64.normalize(jwt.split(".")[1]))
-//              )
-//          )
-//      );
-//
-//  final String jwt;
-//  final Map<String, dynamic> payload;
-
+class AccountPage extends StatefulWidget {
 
   @override
-  _FilesPageState createState() => _FilesPageState();
+  _AccountPageState createState() => _AccountPageState();
 }
 
-class _FilesPageState extends State<FilesPage> {
+class _AccountPageState extends State<AccountPage> {
 
   String _email;
   var email = TextEditingController();
@@ -47,7 +30,7 @@ class _FilesPageState extends State<FilesPage> {
                 children: <Widget>[
                   Text(
                     'Add Profile Picture and your Personal Details',
-                    style: Theme.of(context).textTheme.title,
+                    style: Theme.of(context).textTheme.headline6,
                   ),
                   //======================================================================================== Circle Avatar
                   Container(

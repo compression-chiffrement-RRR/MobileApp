@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:mobileappflutter/Modele/user.dart';
+import 'friendSharedFiles.dart';
 
 class FriendPage extends StatefulWidget {
 
@@ -7,14 +9,77 @@ class FriendPage extends StatefulWidget {
 }
 
 class _FriendPageState extends State<FriendPage>{
-
+  List users;
   final _formKey = GlobalKey<FormState>();
 
   @override
+  void initState() {
+    users = getUsers();
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(child: const Text('Liste d\'amis')),
-      floatingActionButton: FloatingActionButton(
+
+    ListTile makeListTile(User lesson) => ListTile(
+      contentPadding:
+      EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+      leading: Container(
+        padding: EdgeInsets.only(right: 12.0),
+        decoration: new BoxDecoration(
+            border: new Border(
+                right: new BorderSide(width: 1.0, color: Colors.white24))),
+        child: Icon(Icons.person, color: Colors.white),
+      ),
+      title: Text(
+        lesson.username,
+        style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+      ),
+      // subtitle: Text("Intermediate", style: TextStyle(color: Colors.white)),
+
+      subtitle: Row(
+        children: <Widget>[
+          Expanded(
+            flex: 4,
+            child: Padding(
+                padding: EdgeInsets.only(left: 10.0),
+                child: Text(lesson.mail,
+                    style: TextStyle(color: Colors.white))),
+          )
+        ],
+      ),
+      trailing:
+      Icon(Icons.keyboard_arrow_right, color: Colors.white, size: 30.0),
+      onTap: () {
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => DetailPage()));
+      },
+    );
+
+    Card makeCard(User lesson) => Card(
+      elevation: 8.0,
+      margin: new EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
+      child: Container(
+        decoration: BoxDecoration(color: Color.fromRGBO(64, 75, 96, .9)),
+        child: makeListTile(lesson),
+      ),
+    );
+
+    final makeBody = Container(
+      // decoration: BoxDecoration(color: Color.fromRGBO(58, 66, 86, 1.0)),
+      child: ListView.builder(
+        scrollDirection: Axis.vertical,
+        shrinkWrap: true,
+        itemCount: users.length,
+        itemBuilder: (BuildContext context, int index) {
+          return makeCard(users[index]);
+        },
+      ),
+    );
+
+    final floatButton = FloatingActionButton(
           onPressed: () {
             showDialog(
                 context: context,
@@ -32,7 +97,7 @@ class _FriendPageState extends State<FriendPage>{
                             },
                             child: CircleAvatar(
                               child: Icon(Icons.close),
-                              backgroundColor: Colors.black,
+                              backgroundColor: Color.fromRGBO(58, 66, 86, 1.0),
                               foregroundColor: Colors.white,
                             ),
                           ),
@@ -70,8 +135,39 @@ class _FriendPageState extends State<FriendPage>{
                 });
             },
           child: Icon(Icons.group_add),
-          backgroundColor: Colors.black,
-        ),
+          backgroundColor: Color.fromRGBO(58, 66, 86, 1.0),
     );
+
+    return Scaffold(
+      backgroundColor: Color.fromRGBO(58, 66, 86, 1.0),
+      body: makeBody,
+      floatingActionButton: floatButton,
+    );
+
   }
+}
+List getUsers() {
+  return [
+    User(
+        username: "Romain",
+        mail: "romain.boilleau@gmail.com"),
+    User(
+        username: "Romain",
+        mail: "romain.boilleau@gmail.com"),
+    User(
+        username: "Romain",
+        mail: "romain.boilleau@gmail.com"),
+    User(
+        username: "Romainr",
+        mail: "romain.boilleau@gmail.com"),
+    User(
+        username: "Romain",
+        mail: "romain.boilleau@gmail.com"),
+    User(
+        username: "Romain",
+        mail: "romain.boilleau@gmail.com"),
+    User(
+        username: "Romain",
+        mail: "romain.boilleau@gmail.com"),
+  ];
 }
