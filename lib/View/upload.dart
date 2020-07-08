@@ -1,7 +1,10 @@
+import 'dart:convert';
+import 'dart:io';
+
+import 'package:dio/dio.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'dart:convert';
-import 'package:http/http.dart' as http;
+import 'package:http_parser/http_parser.dart';
 import 'package:mobileappflutter/View/login.dart';
 import 'env.dart';
 import 'package:flutter/services.dart';
@@ -31,7 +34,7 @@ class _UploadPageState extends State<UploadPage>{
   String compressionValue = 'none';
   String encryptionValue = 'none';
   String path = '';
-  
+
   @override
   void initState() {
     super.initState();
@@ -62,44 +65,34 @@ class _UploadPageState extends State<UploadPage>{
 
   Future<Map<String, dynamic>> attemptUpload(String compression, String chiffrement, String path) async {
     final jwt = await jwtOrEmpty;
-    // Intilize the multipart request
-    final fileUploadRequest = http.MultipartRequest('POST', apiUrl);
 
-    // Attach the file in the request
-    final file = await http.MultipartFile.fromPath(
-        'file', path
-    );
-//    fileUploadRequest.fields['ext'] = mimeTypeData[1];
+    final tasks = {"accountUuid": "971f685c-fdf9-4423-ae65-0d2ca533b563","types": [{"name": compression, "password": "superpassword"}]};
 
-    final tasks = jsonEncode({
-      "accountUuid": "971f685c-fdf9-4423-ae65-0d2ca533b563",
-      "types": [
-        {"name": compression, "password": "superpassword"},
-        {"name": chiffrement}
-        ]
+    Dio dio = new Dio();
+
+    FormData formData = FormData.fromMap({
+      "file": await MultipartFile.fromFile(path, filename: "uploadedFile.test"),
+      "tasks": MultipartFile.fromString(json.encode(tasks), contentType: new MediaType("application", "json"))
     });
 
-    Map<String,String> headers = {'Authorization': jwt};
-
-    fileUploadRequest.files.add(file);
-    fileUploadRequest.headers.addAll(headers);
-    fileUploadRequest.fields['tasks'] = tasks;
-    print(fileUploadRequest);
-
-
     try {
-      final streamedResponse = await fileUploadRequest.send();
-      final response = await http.Response.fromStream(streamedResponse);
-      print(response.request);
-      if (response.statusCode != 200) {
-        return null;
-      }
-      final Map<String, dynamic> responseData = json.decode(response.body);
-      _resetState();
-      return responseData;
-    } catch (e) {
-      print(e);
+      await dio.post(apiUrl.toString(), data: formData, options: Options(
+        headers: {
+          "Authorization": jwt,
+        },
+        contentType: "multipart/form-data"
+      ));
       return null;
+    } on DioError catch(e) {
+      if(e.response != null) {
+        print(e.response.data);
+        print(e.response.headers);
+        print(e.response.request);
+      } else{
+        // Something happened in setting up or sending the request that triggered an Error
+        print(e.request);
+        print(e.message);
+      }
     }
   }
 
