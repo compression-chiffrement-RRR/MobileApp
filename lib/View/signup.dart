@@ -204,6 +204,7 @@ class SignupPage extends StatelessWidget {
           autocorrect: false,
           keyboardType: keyboardType,
           validator: validator,
+          autovalidate: true,
           onSaved: onSaved,
           decoration: InputDecoration(
             contentPadding: EdgeInsets.symmetric(vertical: 0, horizontal: 10),
