@@ -1,6 +1,13 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:mobileappflutter/Modele/user.dart';
+import 'env.dart';
 import 'friendSharedFiles.dart';
+import 'package:http/http.dart' as http;
+
+import 'login.dart';
+
 
 class FriendPage extends StatefulWidget {
 
@@ -11,12 +18,82 @@ class FriendPage extends StatefulWidget {
 class _FriendPageState extends State<FriendPage>{
   List users;
   final _formKey = GlobalKey<FormState>();
+  final friendController = TextEditingController();
+
+  @override
+  void dispose() {
+    friendController.dispose();
+    super.dispose();
+  }
 
   @override
   void initState() {
     users = getUsers();
     super.initState();
   }
+
+  Future<String> get jwtOrEmpty async {
+    var jwt = await storage.read(key: "jwt");
+    if(jwt == null) return "";
+    return jwt;
+  }
+
+  Future<void> addFriend(String username) async {
+    print('addfriend');
+    final user = await searchUser(username);
+    final body = jsonEncode({"friendUuid": user.uuid});
+    Map<String, String> headers = {
+      'Content-Type': 'application/json; charset=UTF-8'
+    };
+    var res = await http.post(
+        "$SERVER_IP/api/friend",
+        headers: headers,
+        body: body
+    );
+
+    if(res.statusCode != 200) {
+      throw Exception('Error adding this friend');
+    }
+    return null;
+  }
+
+  Future<User> searchUser(String username) async {
+    print('searchUser');
+    Map<String, String> headers = {
+      'Content-Type': 'application/json; charset=UTF-8'
+    };
+    var res = await http.get(
+        "$SERVER_IP/api/account?username=$username",
+        headers: headers
+    );
+    print(res.body);
+    if (res.statusCode == 200) {
+      return User.fromJson(json.decode(res.body));
+    }
+    else if(res.statusCode == 400){
+      throw Exception('No user found');
+    }
+    else {
+      throw Exception('Failed to load user');
+    }
+  }
+
+//  Future<String> getMyFriends() async {
+//    Map<String, String> headers = {
+//      'Content-Type': 'application/json; charset=UTF-8'
+//    };
+//    var res = await http.get(
+//        "$SERVER_IP/api/friend/",
+//        headers: headers
+//    );
+//
+//    if(res.statusCode == 200) {
+//      return res.headers["authorization"];
+//    }
+//    return null;
+//  }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -35,8 +112,6 @@ class _FriendPageState extends State<FriendPage>{
         lesson.username,
         style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
       ),
-      // subtitle: Text("Intermediate", style: TextStyle(color: Colors.white)),
-
       subtitle: Row(
         children: <Widget>[
           Expanded(
@@ -113,7 +188,9 @@ class _FriendPageState extends State<FriendPage>{
                               ),
                               Padding(
                                 padding: EdgeInsets.all(8.0),
-                                child: TextFormField(),
+                                child: TextField(
+                                  controller: friendController,
+                                ),
                               ),
                               Padding(
                                 padding: const EdgeInsets.all(8.0),
@@ -121,7 +198,7 @@ class _FriendPageState extends State<FriendPage>{
                                   child: Text("Submit"),
                                   onPressed: () {
                                     if (_formKey.currentState.validate()) {
-                                      _formKey.currentState.save();
+                                      addFriend(friendController.text) ;
                                     }
                                   },
                                 ),
@@ -146,6 +223,7 @@ class _FriendPageState extends State<FriendPage>{
 
   }
 }
+
 List getUsers() {
   return [
     User(
