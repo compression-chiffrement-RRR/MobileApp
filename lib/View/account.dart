@@ -7,194 +7,367 @@ class AccountPage extends StatefulWidget {
 }
 
 class _AccountPageState extends State<AccountPage> {
-  String _email;
-  var email = TextEditingController();
-  final _formKey = GlobalKey<FormState>();
+  final Color textColor = Colors.white;
+  bool _statusInformation = true;
+  bool _statusSecurity = true;
+  final FocusNode myFocusNode = FocusNode();
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: Container(
-          color: Colors.white,
-          child: Padding(
-            padding: EdgeInsets.only(
-              right: 10,
-              left: 10,
-              top: 10,
-            ),
-            child: SingleChildScrollView(
-              child: Column(
+    return new Scaffold(
+        body: new Container(
+          color: Color.fromRGBO(58, 66, 86, 1.0),
+          child: new ListView(
+            children: <Widget>[
+              Column(
                 children: <Widget>[
-                  Text(
-                    'Add Profile Picture and your Personal Details',
-                    style: Theme.of(context).textTheme.headline6,
-                  ),
-                  //======================================================================================== Circle Avatar
-                  Container(
-                    margin: EdgeInsets.only(top: 20),
-                    alignment: Alignment.center,
-                    child: Column(
-                      children: <Widget>[
-                        Stack(
-                          children: <Widget>[
-                            CircleAvatar(
-                              backgroundImage: NetworkImage(
-                                  'https://git.unilim.fr/assets/no_group_avatar-4a9d347a20d783caee8aaed4a37a65930cb8db965f61f3b72a2e954a0eaeb8ba.png'),
-                              radius: 50.0,
-                            ),
-                            InkWell(
-                              onTap: null,
-                              child: Container(
-                                  padding: EdgeInsets.all(5),
-                                  decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(40.0),
-                                      color: Colors.black),
-                                  margin: EdgeInsets.only(left: 70, top: 70),
-                                  child: Icon(
-                                    Icons.photo_camera,
-                                    size: 25,
-                                    color: Colors.white,
-                                  )),
-                            ),
-                          ],
-                        ),
-                        Text('Half Body',
-                            style: TextStyle(fontWeight: FontWeight.bold)),
-                      ],
-                    ),
-                  ),
-//=========================================================================================== Form
-                  Container(
-                    margin: EdgeInsets.only(top: 20, bottom: 100),
-                    child: Form(
-                      key: _formKey,
-                      child: Column(
+                  SizedBox(height: 30),
+                  new Container(
+                    child: Padding(
+                      padding: EdgeInsets.only(bottom: 25.0),
+                      child: new Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.start,
                         children: <Widget>[
-                          TextFormField(
-                            controller: email,
-                            onChanged: ((String name) {
-                              setState(() {
-                                _email = name;
-                                print(_email);
-                              });
-                            }),
-                            decoration: InputDecoration(
-                              labelText: "Name",
-                              labelStyle: TextStyle(
-                                color: Colors.black87,
-                              ),
-                              border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10)),
-                              focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10)),
-                            ),
-                            textAlign: TextAlign.center,
-                            validator: (value) {
-                              if (value.isEmpty) {
-                                return 'Please enter full name';
-                              }
-                              return null;
-                            },
-                          ),
-
-                          //========================================== Email Address
-                          Container(
-                            margin: EdgeInsets.only(top: 25),
-                            child: TextFormField(
-                              controller: email,
-                              onChanged: ((String email) {
-                                setState(() {
-                                  _email = email;
-                                  print(_email);
-                                });
-                              }),
-                              decoration: InputDecoration(
-                                labelText: "Email Address",
-                                labelStyle: TextStyle(
-                                  color: Colors.black87,
-                                ),
-                                border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(10)),
-                                focusedBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(10)),
-                              ),
-                              textAlign: TextAlign.center,
-                              validator: (value) {
-                                if (value.isEmpty) {
-                                  return 'Please enter email address';
-                                }
-                                return null;
-                              },
-                            ),
-                          ),
-
-                          //===================================================== Emergency Contact
-
-                          Container(
-                            margin: EdgeInsets.only(top: 25),
-                            child: TextFormField(
-                              controller: email,
-                              onChanged: ((String email) {
-                                setState(() {
-                                  _email = email;
-                                  print(_email);
-                                });
-                              }),
-                              decoration: InputDecoration(
-                                labelText: "Contact Number",
-                                labelStyle: TextStyle(
-                                  color: Colors.black87,
-                                ),
-                                border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(10)),
-                                focusedBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(10)),
-                              ),
-                              textAlign: TextAlign.center,
-                              keyboardType: TextInputType.phone,
-                              validator: (value) {
-                                if (value.isEmpty) {
-                                  return 'Please enter emergency contact number';
-                                }
-                                return null;
-                              },
-                            ),
-                          ),
-                          //========================================================Button
-
-                          Center(
-                            child: Container(
-                              width: 300,
-                              margin: EdgeInsets.only(top: 50),
-                              alignment: Alignment.center,
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(25),
-                                  color: Colors.blue),
-                              child: FlatButton(
-                                child: FittedBox(
-                                    child: Text(
-                                  'Save',
-                                  style: TextStyle(
-                                      color: Colors.white, fontSize: 16),
-                                  textAlign: TextAlign.center,
-                                )),
-                                onPressed: () {},
-                              ),
-                            ),
-                          ),
+                          Padding(
+                              padding: EdgeInsets.only(
+                                  left: 25.0, right: 25.0, top: 25.0),
+                              child: new Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisSize: MainAxisSize.max,
+                                children: <Widget>[
+                                  new Column(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: <Widget>[
+                                      new Text(
+                                        'Personal Information',
+                                        style: TextStyle(
+                                            color: textColor,
+                                            fontSize: 18.0,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                    ],
+                                  ),
+                                  new Column(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: <Widget>[
+                                      _statusInformation ? _getEditInformationIcon() : new Container(),
+                                    ],
+                                  )
+                                ],
+                              )),
+                          Padding(
+                              padding: EdgeInsets.only(
+                                  left: 25.0, right: 25.0, top: 25.0),
+                              child: new Row(
+                                mainAxisSize: MainAxisSize.max,
+                                children: <Widget>[
+                                  new Column(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: <Widget>[
+                                      new Text(
+                                        'Name',
+                                        style: TextStyle(
+                                            color: textColor,
+                                            fontSize: 16.0,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              )),
+                          Padding(
+                              padding: EdgeInsets.only(
+                                  left: 25.0, right: 25.0, top: 2.0),
+                              child: new Row(
+                                mainAxisSize: MainAxisSize.max,
+                                children: <Widget>[
+                                  new Flexible(
+                                    child: TextFormField(
+                                      decoration: const InputDecoration(
+                                        hintText: "Enter Your Name",
+                                        hintStyle: TextStyle(color: Colors.white, fontSize: 14),
+                                      ),
+                                      enabled: !_statusInformation,
+                                      autofocus: !_statusInformation,
+                                      initialValue: "test",
+                                      style: TextStyle(color: textColor,),
+                                    ),
+                                  ),
+                                ],
+                              )),
+                          Padding(
+                              padding: EdgeInsets.only(
+                                  left: 25.0, right: 25.0, top: 25.0),
+                              child: new Row(
+                                mainAxisSize: MainAxisSize.max,
+                                children: <Widget>[
+                                  new Column(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: <Widget>[
+                                      new Text(
+                                        'Email',
+                                        style: TextStyle(
+                                            color: textColor,
+                                            fontSize: 16.0,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              )),
+                          Padding(
+                              padding: EdgeInsets.only(
+                                  left: 25.0, right: 25.0, top: 2.0),
+                              child: new Row(
+                                mainAxisSize: MainAxisSize.max,
+                                children: <Widget>[
+                                  new Flexible(
+                                    child: TextFormField(
+                                      decoration: const InputDecoration(
+                                          hintText: "Enter Email",
+                                          hintStyle: TextStyle(color: Colors.white, fontSize: 14),
+                                      ),
+                                      enabled: !_statusInformation,
+                                      style: TextStyle(color: textColor,),
+                                    ),
+                                  ),
+                                ],
+                              )),
+                          !_statusInformation ? _getActionInformationButtons() : new Container(),
+                          SizedBox(height: 30,),
+                          Padding(
+                              padding: EdgeInsets.only(
+                                  left: 25.0, right: 25.0, top: 25.0),
+                              child: new Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisSize: MainAxisSize.max,
+                                children: <Widget>[
+                                  new Column(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: <Widget>[
+                                      new Text(
+                                        'Security Information',
+                                        style: TextStyle(
+                                            color: textColor,
+                                            fontSize: 18.0,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                    ],
+                                  ),
+                                  new Column(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: <Widget>[
+                                      _statusSecurity ? _getEditSecurityIcon() : new Container(),
+                                    ],
+                                  )
+                                ],
+                              )),
+                          Padding(
+                              padding: EdgeInsets.only(
+                                  left: 25.0, right: 25.0, top: 25.0),
+                              child: new Row(
+                                mainAxisSize: MainAxisSize.max,
+                                children: <Widget>[
+                                  new Column(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: <Widget>[
+                                      new Text(
+                                        'Password',
+                                        style: TextStyle(
+                                            color: textColor,
+                                            fontSize: 16.0,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              )),
+                          Padding(
+                              padding: EdgeInsets.only(
+                                  left: 25.0, right: 25.0, top: 2.0),
+                              child: new Row(
+                                mainAxisSize: MainAxisSize.max,
+                                children: <Widget>[
+                                  new Flexible(
+                                    child: TextFormField(
+                                      decoration: const InputDecoration(
+                                        hintText: "Enter Your New Password",
+                                        hintStyle: TextStyle(color: Colors.white, fontSize: 14),
+                                      ),
+                                      obscureText: true,
+                                      enabled: !_statusSecurity,
+                                      autofocus: !_statusSecurity,
+                                      style: TextStyle(color: textColor,),
+                                    ),
+                                  ),
+                                ],
+                              )),
+                          !_statusSecurity ? _getActionSecurityButtons() : new Container(),
                         ],
                       ),
                     ),
-//============================================================================================================= Form Finished
-                  ),
+                  )
                 ],
               ),
-            ),
+            ],
           ),
+        ));
+  }
+
+  @override
+  void dispose() {
+    // Clean up the controller when the Widget is disposed
+    myFocusNode.dispose();
+    super.dispose();
+  }
+
+  Widget _getActionInformationButtons() {
+    return Padding(
+      padding: EdgeInsets.only(left: 25.0, right: 25.0, top: 45.0),
+      child: new Row(
+        mainAxisSize: MainAxisSize.max,
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: <Widget>[
+          Expanded(
+            child: Padding(
+              padding: EdgeInsets.only(right: 10.0),
+              child: Container(
+                  child: new RaisedButton(
+                    child: new Text("Save"),
+                    textColor: Colors.white,
+                    color: Colors.green,
+                    onPressed: () {
+                      setState(() {
+                        _statusInformation = true;
+                        FocusScope.of(context).requestFocus(new FocusNode());
+                      });
+                    },
+                    shape: new RoundedRectangleBorder(
+                        borderRadius: new BorderRadius.circular(20.0)),
+                  )),
+            ),
+            flex: 2,
+          ),
+          Expanded(
+            child: Padding(
+              padding: EdgeInsets.only(left: 10.0),
+              child: Container(
+                  child: new RaisedButton(
+                    child: new Text("Cancel"),
+                    textColor: Colors.white,
+                    color: Colors.red,
+                    onPressed: () {
+                      setState(() {
+                        _statusInformation = true;
+                        FocusScope.of(context).requestFocus(new FocusNode());
+                      });
+                    },
+                    shape: new RoundedRectangleBorder(
+                        borderRadius: new BorderRadius.circular(20.0)),
+                  )),
+            ),
+            flex: 2,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _getActionSecurityButtons() {
+    return Padding(
+      padding: EdgeInsets.only(left: 25.0, right: 25.0, top: 45.0),
+      child: new Row(
+        mainAxisSize: MainAxisSize.max,
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: <Widget>[
+          Expanded(
+            child: Padding(
+              padding: EdgeInsets.only(right: 10.0),
+              child: Container(
+                  child: new RaisedButton(
+                    child: new Text("Save"),
+                    textColor: Colors.white,
+                    color: Colors.green,
+                    onPressed: () {
+                      setState(() {
+                        _statusSecurity = true;
+                        FocusScope.of(context).requestFocus(new FocusNode());
+                      });
+                    },
+                    shape: new RoundedRectangleBorder(
+                        borderRadius: new BorderRadius.circular(20.0)),
+                  )),
+            ),
+            flex: 2,
+          ),
+          Expanded(
+            child: Padding(
+              padding: EdgeInsets.only(left: 10.0),
+              child: Container(
+                  child: new RaisedButton(
+                    child: new Text("Cancel"),
+                    textColor: Colors.white,
+                    color: Colors.red,
+                    onPressed: () {
+                      setState(() {
+                        _statusSecurity = true;
+                        FocusScope.of(context).requestFocus(new FocusNode());
+                      });
+                    },
+                    shape: new RoundedRectangleBorder(
+                        borderRadius: new BorderRadius.circular(20.0)),
+                  )),
+            ),
+            flex: 2,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _getEditInformationIcon() {
+    return new GestureDetector(
+      child: new CircleAvatar(
+        backgroundColor: Colors.red,
+        radius: 14.0,
+        child: new Icon(
+          Icons.edit,
+          color: Colors.white,
+          size: 16.0,
         ),
       ),
+      onTap: () {
+        setState(() {
+          _statusInformation = false;
+        });
+      },
+    );
+  }
+
+  Widget _getEditSecurityIcon() {
+    return new GestureDetector(
+      child: new CircleAvatar(
+        backgroundColor: Colors.red,
+        radius: 14.0,
+        child: new Icon(
+          Icons.edit,
+          color: Colors.white,
+          size: 16.0,
+        ),
+      ),
+      onTap: () {
+        setState(() {
+          _statusSecurity = false;
+        });
+      },
     );
   }
 }
