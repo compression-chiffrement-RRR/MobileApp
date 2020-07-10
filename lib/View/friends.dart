@@ -16,7 +16,6 @@ class FriendPage extends StatefulWidget {
 }
 
 class _FriendPageState extends State<FriendPage>{
-  List users;
   final _formKey = GlobalKey<FormState>();
   final friendController = TextEditingController();
 
@@ -26,16 +25,12 @@ class _FriendPageState extends State<FriendPage>{
     return jwt;
   }
 
+  set users(Future<List<User>> users) {}
+
   @override
   void dispose() {
     friendController.dispose();
     super.dispose();
-  }
-
-  @override
-  void initState() {
-    users = getUsers();
-    super.initState();
   }
 
   Future<bool> addFriend(String username) async {
@@ -82,27 +77,40 @@ class _FriendPageState extends State<FriendPage>{
     }
   }
 
-//  Future<String> getMyFriends() async {
-//    Map<String, String> headers = {
-//      'Content-Type': 'application/json; charset=UTF-8'
-//    };
-//    var res = await http.get(
-//        "$SERVER_IP/api/friend/",
-//        headers: headers
-//    );
-//
-//    if(res.statusCode == 200) {
-//      return res.headers["authorization"];
-//    }
-//    return null;
-//  }
+  Future<List<User>> getMyFriends() async {
+    final jwt = await jwtOrEmpty;
+    Map<String, String> headers = {
+      'Content-Type': 'application/json; charset=UTF-8',
+      "Authorization": jwt
+    };
+    var res = await http.get(
+        "$SERVER_IP/api/friend/",
+        headers: headers
+    );
+    if(res.statusCode == 200) {
+      var jsonData = json.decode(res.body);
+      List<User> users = [];
+      for(var u in jsonData){
+        User user = User.fromJson(u);
+        users.add(user);
+      }
+      
+      return users;
+    }
+    return null;
+  }
 
+  @override
+  void initState() {
+    super.initState();
+    users = getMyFriends();
+  }
 
 
   @override
   Widget build(BuildContext context) {
 
-    ListTile makeListTile(User lesson) => ListTile(
+    ListTile makeListTile(User user) => ListTile(
       contentPadding:
       EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
       leading: Container(
@@ -113,7 +121,7 @@ class _FriendPageState extends State<FriendPage>{
         child: Icon(Icons.person, color: Colors.white),
       ),
       title: Text(
-        lesson.username,
+        user.username,
         style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
       ),
       subtitle: Row(
@@ -122,13 +130,12 @@ class _FriendPageState extends State<FriendPage>{
             flex: 4,
             child: Padding(
                 padding: EdgeInsets.only(left: 10.0),
-                child: Text(lesson.mail,
+                child: Text(user.email,
                     style: TextStyle(color: Colors.white))),
           )
         ],
       ),
-      trailing:
-      Icon(Icons.keyboard_arrow_right, color: Colors.white, size: 30.0),
+      trailing: Icon(Icons.keyboard_arrow_right, color: Colors.white, size: 30.0),
       onTap: () {
         Navigator.push(
             context,
@@ -137,12 +144,12 @@ class _FriendPageState extends State<FriendPage>{
       },
     );
 
-    Card makeCard(User lesson) => Card(
+    Card makeCard(User user) => Card(
       elevation: 8.0,
       margin: new EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
       child: Container(
         decoration: BoxDecoration(color: Color.fromRGBO(64, 75, 96, .9)),
-        child: makeListTile(lesson),
+        child: makeListTile(user),
       ),
     );
 
@@ -236,16 +243,29 @@ class _FriendPageState extends State<FriendPage>{
               ),
             ),
           Expanded(
-            child: ListView.builder(
-              scrollDirection: Axis.vertical,
-              shrinkWrap: true,
-              itemCount: users.length,
-              itemBuilder: (BuildContext context, int index) {
-                return makeCard(users[index]);
-              },
-            ),
+            child: FutureBuilder(
+              future: getMyFriends(),
+              builder: (BuildContext context, AsyncSnapshot snapshot) {
+                if (snapshot.data == null) {
+                  return Container(
+                      child: Center(
+                        child: Text("Loading..."),
+                      )
+                  );
+                } else {
+                  return ListView.builder(
+                    scrollDirection: Axis.vertical,
+                    shrinkWrap: true,
+                    itemCount: snapshot.data.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      print(snapshot.data[index].email);
+                      return makeCard(snapshot.data[index]);
+                    },
+                  );
+                }
+              }
+            )
           )
-
         ],
       )
     );
@@ -256,30 +276,9 @@ class _FriendPageState extends State<FriendPage>{
     );
 
   }
+
+  List getUsers() {
+    getMyFriends();
+  }
 }
 
-List getUsers() {
-  return [
-    User(
-        username: "Romain",
-        mail: "romain.boilleau@gmail.com"),
-    User(
-        username: "Romain",
-        mail: "romain.boilleau@gmail.com"),
-    User(
-        username: "Romain",
-        mail: "romain.boilleau@gmail.com"),
-    User(
-        username: "Romainr",
-        mail: "romain.boilleau@gmail.com"),
-    User(
-        username: "Romain",
-        mail: "romain.boilleau@gmail.com"),
-    User(
-        username: "Romain",
-        mail: "romain.boilleau@gmail.com"),
-    User(
-        username: "Romain",
-        mail: "romain.boilleau@gmail.com"),
-  ];
-}
