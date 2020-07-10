@@ -20,6 +20,12 @@ class _FriendPageState extends State<FriendPage>{
   final _formKey = GlobalKey<FormState>();
   final friendController = TextEditingController();
 
+  Future<String> get jwtOrEmpty async {
+    var jwt = await storage.read(key: "jwt");
+    if(jwt == null) return "";
+    return jwt;
+  }
+
   @override
   void dispose() {
     friendController.dispose();
@@ -32,35 +38,36 @@ class _FriendPageState extends State<FriendPage>{
     super.initState();
   }
 
-  Future<String> get jwtOrEmpty async {
-    var jwt = await storage.read(key: "jwt");
-    if(jwt == null) return "";
-    return jwt;
-  }
+  Future<bool> addFriend(String username) async {
+      final jwt = await jwtOrEmpty;
+      print('addfriend');
+      final user = await searchUser(username);
+      if(user != null) {
+        final body = jsonEncode({"friendUuid": user.uuid});
+        Map<String, String> headers = {
+          'Content-Type': 'application/json; charset=UTF-8',
+          "Authorization": jwt,
+        };
+        var res = await http.post(
+            "$SERVER_IP/api/friend",
+            headers: headers,
+            body: body
+        );
 
-  Future<void> addFriend(String username) async {
-    print('addfriend');
-    final user = await searchUser(username);
-    final body = jsonEncode({"friendUuid": user.uuid});
-    Map<String, String> headers = {
-      'Content-Type': 'application/json; charset=UTF-8'
-    };
-    var res = await http.post(
-        "$SERVER_IP/api/friend",
-        headers: headers,
-        body: body
-    );
-
-    if(res.statusCode != 200) {
-      throw Exception('Error adding this friend');
+        if (res.statusCode != 200) {
+          return false;
+        }
+        return true;
+      }
+      return false;
     }
-    return null;
-  }
 
   Future<User> searchUser(String username) async {
+    final jwt = await jwtOrEmpty;
     print('searchUser');
     Map<String, String> headers = {
-      'Content-Type': 'application/json; charset=UTF-8'
+      'Content-Type': 'application/json; charset=UTF-8',
+      "Authorization": jwt
     };
     var res = await http.get(
         "$SERVER_IP/api/account?username=$username",
@@ -70,11 +77,8 @@ class _FriendPageState extends State<FriendPage>{
     if (res.statusCode == 200) {
       return User.fromJson(json.decode(res.body));
     }
-    else if(res.statusCode == 400){
-      throw Exception('No user found');
-    }
     else {
-      throw Exception('Failed to load user');
+      return null;
     }
   }
 
@@ -143,82 +147,112 @@ class _FriendPageState extends State<FriendPage>{
     );
 
     final makeBody = Container(
-      // decoration: BoxDecoration(color: Color.fromRGBO(58, 66, 86, 1.0)),
-      child: ListView.builder(
-        scrollDirection: Axis.vertical,
-        shrinkWrap: true,
-        itemCount: users.length,
-        itemBuilder: (BuildContext context, int index) {
-          return makeCard(users[index]);
-        },
-      ),
-    );
-
-    final floatButton = FloatingActionButton(
-          onPressed: () {
-            showDialog(
-                context: context,
-                builder: (BuildContext context) {
-                  return AlertDialog(
-                    content: Stack(
-                      overflow: Overflow.visible,
-                      children: <Widget>[
-                        Positioned(
-                          right: -40.0,
-                          top: -40.0,
-                          child: InkResponse(
-                            onTap: () {
-                              Navigator.of(context).pop();
-                            },
-                            child: CircleAvatar(
-                              child: Icon(Icons.close),
-                              backgroundColor: Color.fromRGBO(58, 66, 86, 1.0),
-                              foregroundColor: Colors.white,
-                            ),
-                          ),
+      child: Column(
+        children: <Widget>[
+            Form(
+              key: _formKey,
+              child: Container(
+                height: 50,
+                margin: new EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
+                padding: EdgeInsets.only(left: 20, right: 3, top: 3, bottom: 3),
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(5),
+                    color: Colors.white
+                ),
+                child: Row(
+                  children: <Widget>[
+                    Expanded(
+                      child: TextFormField(
+                        controller: friendController,
+                        validator: (value) {
+                          if (value.isEmpty) {
+                            return '';
+                          }
+                          return null;
+                        },
+                        decoration: InputDecoration(
+                            hintText: "Add a friend",
+                            hintStyle: TextStyle(color: Colors.grey),
+                            border: InputBorder.none
                         ),
-                        Form(
-                          key: _formKey,
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: <Widget>[
-                              Padding(
-                                padding: EdgeInsets.all(8.0),
-                                child: Text('Username'),
-                              ),
-                              Padding(
-                                padding: EdgeInsets.all(8.0),
-                                child: TextField(
-                                  controller: friendController,
-                                ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: RaisedButton(
-                                  child: Text("Submit"),
-                                  onPressed: () {
-                                    if (_formKey.currentState.validate()) {
-                                      addFriend(friendController.text) ;
-                                    }
-                                  },
-                                ),
-                              )
-                            ],
-                          ),
-                        ),
-                      ],
+                      ),
                     ),
-                  );
-                });
-            },
-          child: Icon(Icons.group_add),
-          backgroundColor: Color.fromRGBO(58, 66, 86, 1.0),
+                    MaterialButton(
+                      onPressed: () async {
+                        if(_formKey.currentState.validate()) {
+                          if (await addFriend(friendController.text)) {
+                            return showDialog<void>(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  title: Text('Friend Added'),
+                                  content: const Text("successfull"),
+                                  actions: <Widget>[
+                                    FlatButton(
+                                      child: Text('Ok'),
+                                      onPressed: () {
+                                        friendController.clear();
+                                        Navigator.of(context).pop();
+                                      },
+                                    ),
+                                  ],
+                                );
+                              },
+                            );
+                          }
+                          else {
+                            return showDialog<void>(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  title: Text('Friend Not Added'),
+                                  content: const Text("error"),
+                                  actions: <Widget>[
+                                    FlatButton(
+                                      child: Text('Ok'),
+                                      onPressed: () {
+                                        friendController.clear();
+                                        Navigator.of(context).pop();
+                                      },
+                                    ),
+                                  ],
+                                );
+                              },
+                            );
+                          }
+                        }
+                      },
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(5)
+                      ),
+                      height: double.infinity,
+                      minWidth: 50,
+                      elevation: 0,
+                      color: Color.fromRGBO(64, 75, 96, .9),
+                      child: Icon(Icons.group_add, color: Colors.white,),
+                    )
+                  ],
+                ),
+              ),
+            ),
+          Expanded(
+            child: ListView.builder(
+              scrollDirection: Axis.vertical,
+              shrinkWrap: true,
+              itemCount: users.length,
+              itemBuilder: (BuildContext context, int index) {
+                return makeCard(users[index]);
+              },
+            ),
+          )
+
+        ],
+      )
     );
 
     return Scaffold(
       backgroundColor: Color.fromRGBO(58, 66, 86, 1.0),
       body: makeBody,
-      floatingActionButton: floatButton,
     );
 
   }
