@@ -4,7 +4,7 @@ import 'package:mobileappflutter/View/friends.dart';
 import 'package:mobileappflutter/View/home.dart';
 import 'dart:convert' show json, base64, ascii;
 import 'dart:convert';
-import 'Account.dart';
+import 'account.dart';
 
 class Navbar extends StatefulWidget {
   Navbar(this.jwt, this.payload);
@@ -83,7 +83,7 @@ class _NavbarState extends State<Navbar>{
             title: Text('Friends'),
           ),
           BottomNavigationBarItem(
-              icon: Icon(Icons.person_outline),
+              icon: Icon(Icons.person),
               title: Text('Account'),
           ),
           BottomNavigationBarItem(

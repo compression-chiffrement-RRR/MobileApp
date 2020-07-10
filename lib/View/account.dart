@@ -2,13 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 class AccountPage extends StatefulWidget {
-
   @override
   _AccountPageState createState() => _AccountPageState();
 }
 
 class _AccountPageState extends State<AccountPage> {
-
   String _email;
   var email = TextEditingController();
   final _formKey = GlobalKey<FormState>();
@@ -177,13 +175,12 @@ class _AccountPageState extends State<AccountPage> {
                               child: FlatButton(
                                 child: FittedBox(
                                     child: Text(
-                                      'Save',
-                                      style: TextStyle(
-                                          color: Colors.white, fontSize: 16),
-                                      textAlign: TextAlign.center,
-                                    )),
-                                onPressed: () {
-                                },
+                                  'Save',
+                                  style: TextStyle(
+                                      color: Colors.white, fontSize: 16),
+                                  textAlign: TextAlign.center,
+                                )),
+                                onPressed: () {},
                               ),
                             ),
                           ),

@@ -20,7 +20,8 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Authentication',
+      debugShowCheckedModeBanner: false,
+      title: "Cyphernet",
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
