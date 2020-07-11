@@ -15,6 +15,7 @@ class PendingFriendPage extends StatefulWidget {
 }
 
 class _PendingFriendPageState extends State<PendingFriendPage>{
+  final GlobalKey<AnimatedListState> _listKey = GlobalKey();
   final friendController = TextEditingController();
 
   Future<String> get jwtOrEmpty async {
@@ -23,7 +24,7 @@ class _PendingFriendPageState extends State<PendingFriendPage>{
     return jwt;
   }
 
-  set users(Future<List<User>> users) {}
+  List<User> users;
 
   @override
   void dispose() {
@@ -67,9 +68,9 @@ class _PendingFriendPageState extends State<PendingFriendPage>{
         body: body
     );
     if(res.statusCode == 200) {
-
+      return true;
     }
-    return null;
+    return false;
   }
 
   Future<bool> ignoreFriend(fUuid) async {
@@ -85,68 +86,78 @@ class _PendingFriendPageState extends State<PendingFriendPage>{
         body: body
     );
     if(res.statusCode == 200) {
-
+      return true;
     }
-    return null;
+    return false;
   }
 
   @override
   void initState() {
     super.initState();
-    users = getMyPendingFriends();
   }
 
   @override
   Widget build(BuildContext context) {
 
-    Slidable slide(User user) => Slidable(
-      delegate: new SlidableDrawerDelegate(),
-      actionExtentRatio: 0.25,
-      child: new Card(
-        elevation: 8.0,
-        margin: new EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
-        child: Container(
-          decoration: BoxDecoration(color: Color.fromRGBO(64, 75, 96, .9)),
-          child: new ListTile(
-            contentPadding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
-            leading: Container(
-              padding: EdgeInsets.only(right: 12.0),
-              decoration: new BoxDecoration(
-                  border: new Border(
-                      right: new BorderSide(width: 1.0, color: Colors.white24))),
-              child: Icon(Icons.person, color: Colors.white),
-            ),
-            title: new Text(
-              user.username,
-              style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+    ScaleTransition slide(User user, int index, Animation<double> animation) => ScaleTransition(
+      child: Slidable(
+        delegate: new SlidableDrawerDelegate(),
+        actionExtentRatio: 0.25,
+        child: new Card(
+          elevation: 8.0,
+          margin: new EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
+          child: Container(
+            decoration: BoxDecoration(color: Color.fromRGBO(64, 75, 96, .9)),
+            child: new ListTile(
+              contentPadding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+              leading: Container(
+                padding: EdgeInsets.only(right: 12.0),
+                decoration: new BoxDecoration(
+                    border: new Border(
+                        right: new BorderSide(width: 1.0, color: Colors.white24))),
+                child: Icon(Icons.person, color: Colors.white),
+              ),
+              title: new Text(
+                user.username,
+                style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+              ),
             ),
           ),
         ),
-      ),
-      secondaryActions: <Widget>[
-        new Card(
-          margin: new EdgeInsets.symmetric(horizontal: 0, vertical: 6.0),
-          child: new IconSlideAction(
-            caption: 'accept',
-            color: Colors.green,
-            icon: Icons.check,
-            onTap: () {
-              acceptFriend(user.uuid);
-            },
-          ),
-        ),
-        new Card(
-          margin: new EdgeInsets.symmetric(horizontal: 0, vertical: 6.0),
-          child: new IconSlideAction(
-            caption: 'refuse',
-            color: Colors.red,
-            icon: Icons.delete,
-            onTap: () {
-              ignoreFriend(user.uuid);
+        secondaryActions: <Widget>[
+          new Card(
+            margin: new EdgeInsets.symmetric(horizontal: 0, vertical: 6.0),
+            child: new IconSlideAction(
+              caption: 'accept',
+              color: Colors.green,
+              icon: Icons.check,
+              onTap: () async {
+                await acceptFriend(user.uuid);
+                _listKey.currentState.removeItem(index, (context, animation) =>
+                    slide(user, index, animation),
+                    duration: const Duration(milliseconds: 250));
+                users.removeAt(index);
               },
+            ),
           ),
-        ),
-      ],
+          new Card(
+            margin: new EdgeInsets.symmetric(horizontal: 0, vertical: 6.0),
+            child: new IconSlideAction(
+              caption: 'refuse',
+              color: Colors.red,
+              icon: Icons.delete,
+              onTap: () async {
+                await ignoreFriend(user.uuid);
+                _listKey.currentState.removeItem(index, (context, animation) =>
+                    slide(user, index, animation),
+                    duration: const Duration(milliseconds: 250));
+                users.removeAt(index);
+              },
+            ),
+          ),
+        ],
+      ),
+      scale: animation,
     );
 
     final makeBody = Container(
@@ -163,13 +174,14 @@ class _PendingFriendPageState extends State<PendingFriendPage>{
                             )
                         );
                       } else {
-                        return ListView.builder(
+                        users = snapshot.data;
+                        return AnimatedList(
+                          key: _listKey,
                           scrollDirection: Axis.vertical,
                           shrinkWrap: true,
-                          itemCount: snapshot.data.length,
-                          itemBuilder: (BuildContext context, int index) {
-                            print(snapshot.data[index].email);
-                            return slide(snapshot.data[index]);
+                          initialItemCount: users.length,
+                          itemBuilder: (context, index, animation) {
+                              return slide(users[index], index, animation);
                           },
                         );
                       }
