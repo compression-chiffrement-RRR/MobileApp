@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:mobileappflutter/View/files.dart';
-import 'package:mobileappflutter/View/friends.dart';
 import 'package:mobileappflutter/View/home.dart';
 import 'dart:convert' show json, base64, ascii;
 import 'dart:convert';
 import 'account.dart';
+import 'friendBar.dart';
 
 class Navbar extends StatefulWidget {
   Navbar(this.jwt, this.payload);
@@ -46,7 +46,7 @@ class _NavbarState extends State<Navbar>{
   int _currentIndex = 0;
   final statefulWidgetBuilder = [
     FilesPage(),
-    FriendPage(),
+    FriendBar(),
     AccountPage(),
     HomePage(),
   ];

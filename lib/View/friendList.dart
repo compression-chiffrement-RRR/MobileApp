@@ -9,13 +9,13 @@ import 'package:http/http.dart' as http;
 import 'login.dart';
 
 
-class FriendPage extends StatefulWidget {
+class FriendListPage extends StatefulWidget {
 
   @override
-  _FriendPageState createState() => _FriendPageState();
+  _FriendListPageState createState() => _FriendListPageState();
 }
 
-class _FriendPageState extends State<FriendPage>{
+class _FriendListPageState extends State<FriendListPage>{
   final _formKey = GlobalKey<FormState>();
   final friendController = TextEditingController();
 
