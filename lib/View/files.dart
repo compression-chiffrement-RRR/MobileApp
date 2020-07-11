@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mobileappflutter/Modele/file.dart';
+import 'package:mobileappflutter/Style/color.dart';
 import 'friendSharedFiles.dart';
 import 'upload.dart';
 
@@ -53,13 +54,13 @@ class _FilesPageState extends State<FilesPage>{
       elevation: 8.0,
       margin: new EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
       child: Container(
-        decoration: BoxDecoration(color: Color.fromRGBO(64, 75, 96, .9)),
+        decoration: BoxDecoration(color: AppColor.secondaryColor),
         child: makeListTile(file),
       ),
     );
 
     final makeBody = Container(
-        // decoration: BoxDecoration(color: Color.fromRGBO(58, 66, 86, 1.0)),
+        // decoration: BoxDecoration(color: AppColor.mainColor),
         child: GridView.count(
         crossAxisCount: 3,
         children: List.generate(files.length, (index) {
@@ -77,11 +78,11 @@ class _FilesPageState extends State<FilesPage>{
                 builder: (context) => UploadPage()));
       },
       child: Icon(Icons.file_upload),
-      backgroundColor: Color.fromRGBO(58, 66, 86, 1.0),
+      backgroundColor: AppColor.mainColor,
     );
 
     return Scaffold(
-      backgroundColor: Color.fromRGBO(58, 66, 86, 1.0),
+      backgroundColor: AppColor.mainColor,
       body: makeBody,
       floatingActionButton: floatButton,
     );

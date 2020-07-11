@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mobileappflutter/Modele/user.dart';
 import 'package:http/http.dart' as http;
+import 'package:mobileappflutter/Style/color.dart';
 import 'dart:convert';
 import 'env.dart';
 import 'login.dart';
@@ -102,7 +103,7 @@ class _AccountPageState extends State<AccountPage> {
     return Scaffold(
       key: _scaffoldKey,
       body: Container(
-        color: Color.fromRGBO(58, 66, 86, 1.0),
+        color: AppColor.mainColor,
         child: ListView(
           children: <Widget>[
             Column(

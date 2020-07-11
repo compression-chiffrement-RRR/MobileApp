@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mobileappflutter/View/files.dart';
+import 'package:mobileappflutter/Style/color.dart';
 import 'package:mobileappflutter/View/home.dart';
 import 'dart:convert' show json, base64, ascii;
 import 'dart:convert';
@@ -53,7 +54,7 @@ class _NavbarState extends State<Navbar>{
 
   final topAppBar = AppBar(
     elevation: 0.1,
-    backgroundColor: Color.fromRGBO(58, 66, 86, 1.0),
+    backgroundColor: AppColor.mainColor,
   );
 
   @override
@@ -70,7 +71,7 @@ class _NavbarState extends State<Navbar>{
         showUnselectedLabels: false,
         currentIndex: _currentIndex,
         type: BottomNavigationBarType.fixed,
-        backgroundColor: Color.fromRGBO(58, 66, 86, 1.0),
+        backgroundColor: AppColor.mainColor,
         fixedColor: Colors.white,
         unselectedItemColor: Colors.grey,
         items: [

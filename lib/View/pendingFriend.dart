@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:mobileappflutter/Modele/user.dart';
+import 'package:mobileappflutter/Style/color.dart';
 import 'env.dart';
 import 'package:http/http.dart' as http;
 import 'login.dart';
@@ -107,7 +108,7 @@ class _PendingFriendPageState extends State<PendingFriendPage>{
           elevation: 8.0,
           margin: new EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
           child: Container(
-            decoration: BoxDecoration(color: Color.fromRGBO(64, 75, 96, .9)),
+            decoration: BoxDecoration(color: AppColor.secondaryColor),
             child: new ListTile(
               contentPadding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
               leading: Container(
@@ -193,7 +194,7 @@ class _PendingFriendPageState extends State<PendingFriendPage>{
     );
 
     return Scaffold(
-      backgroundColor: Color.fromRGBO(58, 66, 86, 1.0),
+      backgroundColor: AppColor.mainColor,
       body: makeBody,
     );
 

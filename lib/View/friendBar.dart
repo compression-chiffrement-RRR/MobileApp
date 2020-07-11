@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mobileappflutter/View/friendList.dart';
+import 'package:mobileappflutter/Style/color.dart';
 import 'pendingFriend.dart';
 
 class FriendBar extends StatefulWidget {
@@ -14,7 +15,7 @@ class _FriendBarState extends State<FriendBar> with SingleTickerProviderStateMix
     return DefaultTabController(
       length: 2,
       child: Scaffold(
-        backgroundColor: Color.fromRGBO(58, 66, 86, 1.0),
+        backgroundColor: AppColor.mainColor,
         appBar: PreferredSize(
           preferredSize: new Size(200, 30),
           child: TabBar(

@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:mobileappflutter/Modele/user.dart';
+import 'package:mobileappflutter/Style/color.dart';
 import 'env.dart';
 import 'friendSharedFiles.dart';
 import 'package:http/http.dart' as http;
@@ -148,7 +149,7 @@ class _FriendListPageState extends State<FriendListPage>{
       elevation: 8.0,
       margin: new EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
       child: Container(
-        decoration: BoxDecoration(color: Color.fromRGBO(64, 75, 96, .9)),
+        decoration: BoxDecoration(color: AppColor.secondaryColor),
         child: makeListTile(user),
       ),
     );
@@ -235,7 +236,7 @@ class _FriendListPageState extends State<FriendListPage>{
                       height: double.infinity,
                       minWidth: 50,
                       elevation: 0,
-                      color: Color.fromRGBO(64, 75, 96, .9),
+                      color: AppColor.secondaryColor,
                       child: Icon(Icons.group_add, color: Colors.white,),
                     )
                   ],
@@ -271,7 +272,7 @@ class _FriendListPageState extends State<FriendListPage>{
     );
 
     return Scaffold(
-      backgroundColor: Color.fromRGBO(58, 66, 86, 1.0),
+      backgroundColor: AppColor.mainColor,
       body: makeBody,
     );
 

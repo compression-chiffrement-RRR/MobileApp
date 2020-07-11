@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mobileappflutter/Style/color.dart';
 import 'package:mobileappflutter/animation/FadeAnimation.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -136,12 +137,12 @@ class SignupPage extends StatelessWidget {
               ),
               FadeAnimation(1.6, RaisedButton(
                 textColor: Colors.white,
-                color: Color.fromRGBO(93, 113, 163, 1.0),
+                color: AppColor.thirdColor,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(50),
                 ),
-                padding: EdgeInsets.symmetric(horizontal: 130, vertical: 15),
-                child: Text("Sign up", style: TextStyle(color: Colors.black, fontWeight: FontWeight.w600, fontSize: 16),),
+                padding: EdgeInsets.symmetric(horizontal: 100, vertical: 15),
+                child: Text("Sign up", style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600, fontSize: 16),),
                 onPressed: () async {
                   if (_formKey.currentState.validate()) {
                     _formKey.currentState.save();
@@ -204,7 +205,6 @@ class SignupPage extends StatelessWidget {
           autocorrect: false,
           keyboardType: keyboardType,
           validator: validator,
-          autovalidate: true,
           onSaved: onSaved,
           decoration: InputDecoration(
             contentPadding: EdgeInsets.symmetric(vertical: 0, horizontal: 10),

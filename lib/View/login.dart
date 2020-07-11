@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:mobileappflutter/Style/color.dart';
 import 'package:mobileappflutter/Animation/FadeAnimation.dart';
 import 'package:mobileappflutter/View/signup.dart';
 import 'dart:convert' show json, base64, ascii;
@@ -88,9 +89,9 @@ class LoginPage extends StatelessWidget {
             gradient: LinearGradient(
                 begin: Alignment.topCenter,
                 colors: [
-                  Color.fromRGBO(58, 66, 86, 1.0),
-                  Color.fromRGBO(83, 94, 121, 1.0),
-                  Color.fromRGBO(118, 131, 162, 1.0)
+                  AppColor.mainColor,
+                  AppColor.mainColorLight1,
+                  AppColor.mainColorLight2
                 ]
             )
         ),
@@ -127,7 +128,7 @@ class LoginPage extends StatelessWidget {
                               color: Colors.white,
                               borderRadius: BorderRadius.circular(10),
                               boxShadow: [BoxShadow(
-                                  color: Color.fromRGBO(58, 66, 86, 0.3),
+                                  color: AppColor.mainColorLight2,
                                   blurRadius: 20,
                                   offset: Offset(0, 10)
                               )]
@@ -171,7 +172,7 @@ class LoginPage extends StatelessWidget {
                         SizedBox(height: 40,),
                         FadeAnimation(1.6, RaisedButton(
                           textColor: Colors.white,
-                          color: Color.fromRGBO(93, 113, 163, 1.0),
+                          color: AppColor.thirdColor,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(20),
                           ),
@@ -195,7 +196,7 @@ class LoginPage extends StatelessWidget {
                           },
                         ),),
                         FadeAnimation(2, FlatButton(
-                          child: Text("Create Account", style: TextStyle(color: Color.fromRGBO(49, 39, 79, .6)),),
+                          child: Text("Create Account", style: TextStyle(color: AppColor.secondaryColor),),
                           onPressed: () {
                             Navigator.push(context, MaterialPageRoute(
                               builder: (context) => new SignupPage()
