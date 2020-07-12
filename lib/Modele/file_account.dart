@@ -8,8 +8,12 @@ class FileAccount {
 
   factory FileAccount.fromJson(Map<String, dynamic> json) {
     return FileAccount(
-        userFilesAuthor: json["userFilesAuthor"],
-        userFilesCollaborator: json["userFilesCollaborator"]
+        userFilesAuthor: (json["userFilesAuthor"] as List<dynamic>).map((element) {
+          return FileBasicInformation.fromJson(element);
+        }).toList(),
+        userFilesCollaborator: (json["userFilesCollaborator"] as List<dynamic>).map((element) {
+          return FileBasicInformation.fromJson(element);
+        }).toList()
     );
   }
 }

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mobileappflutter/View/files.dart';
+import 'package:mobileappflutter/View/file_list.dart';
 import 'package:mobileappflutter/Style/color.dart';
 import 'account.dart';
 import 'friendBar.dart';
@@ -20,7 +20,7 @@ class _NavbarState extends State<Navbar>{
 
   int _currentIndex = 0;
   final statefulWidgetBuilder = [
-    FilesPage(),
+    FileListPage(),
     FriendBar(),
     AccountPage()
   ];
