@@ -63,6 +63,8 @@ class _PendingFriendPageState extends State<PendingFriendPage>{
             icon: Icons.check,
             onTap: () async {
               await _friendPendingService.confirmFriend(user);
+              setState(() {
+              });
             },
           ),
         ),
@@ -74,6 +76,8 @@ class _PendingFriendPageState extends State<PendingFriendPage>{
             icon: Icons.delete,
             onTap: () async {
               await _friendPendingService.ignoreFriend(user);
+              setState(() {
+              });
             },
           ),
         ),
