@@ -180,7 +180,6 @@ class _FriendListPageState extends State<FriendListPage>{
                         shrinkWrap: true,
                         itemCount: snapshot.data.length,
                         itemBuilder: (BuildContext context, int index) {
-                          print(snapshot.data[index].email);
                           return makeCard(snapshot.data[index]);
                         },
                       );

@@ -41,6 +41,7 @@ class FriendPendingService extends FriendPendingServiceBase {
 
   @override
   Future<List<User>> getCurrentPendingFriendsOrRefresh() async {
+    print("getCurrentPendingFriendsOrRefresh");
     if (currentPendingFriends.length > 0) {
       return currentPendingFriends;
     }
@@ -49,6 +50,7 @@ class FriendPendingService extends FriendPendingServiceBase {
 
   @override
   Future<List<User>> refreshCurrentPendingFriends() async {
+    print("refreshCurrentPendingFriends");
     List<User> friends = await _friendRepository.getMyPendingFriends();
     setStatePendingFriends(friends);
     return currentPendingFriends;
