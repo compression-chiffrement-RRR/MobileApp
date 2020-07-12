@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:mobileappflutter/Modele/user.dart';
+import 'package:mobileappflutter/Service/friend_pending_service.dart';
 import 'package:mobileappflutter/Style/color.dart';
 import 'env.dart';
 import 'package:http/http.dart' as http;
@@ -16,14 +17,9 @@ class PendingFriendPage extends StatefulWidget {
 }
 
 class _PendingFriendPageState extends State<PendingFriendPage>{
+  final FriendPendingService _friendPendingService = FriendPendingService();
   final GlobalKey<AnimatedListState> _listKey = GlobalKey();
   final friendController = TextEditingController();
-
-  Future<String> get jwtOrEmpty async {
-    var jwt = await storage.read(key: "jwt");
-    if(jwt == null) return "";
-    return jwt;
-  }
 
   List<User> users;
 
@@ -31,65 +27,6 @@ class _PendingFriendPageState extends State<PendingFriendPage>{
   void dispose() {
     friendController.dispose();
     super.dispose();
-  }
-
-  Future<List<User>> getMyPendingFriends() async {
-    final jwt = await jwtOrEmpty;
-    Map<String, String> headers = {
-      'Content-Type': 'application/json; charset=UTF-8',
-      "Authorization": jwt
-    };
-    var res = await http.get(
-        "$SERVER_IP/api/friend/pending",
-        headers: headers
-    );
-    if(res.statusCode == 200) {
-      var jsonData = json.decode(res.body);
-      List<User> users = [];
-      for(var u in jsonData){
-        User user = User.fromJson(u);
-        users.add(user);
-      }
-
-      return users;
-    }
-    return null;
-  }
-
-  Future<bool> acceptFriend(fUuid) async {
-    final jwt = await jwtOrEmpty;
-    final body = jsonEncode({"friendUuid": fUuid});
-    Map<String, String> headers = {
-      'Content-Type': 'application/json; charset=UTF-8',
-      "Authorization": jwt
-    };
-    var res = await http.post(
-        "$SERVER_IP/api/friend/confirmFriend",
-        headers: headers,
-        body: body
-    );
-    if(res.statusCode == 200) {
-      return true;
-    }
-    return false;
-  }
-
-  Future<bool> ignoreFriend(fUuid) async {
-    final jwt = await jwtOrEmpty;
-    final body = jsonEncode({"friendUuid": fUuid});
-    Map<String, String> headers = {
-      'Content-Type': 'application/json; charset=UTF-8',
-      "Authorization": jwt
-    };
-    var res = await http.post(
-        "$SERVER_IP/api/friend/ignoreFriend",
-        headers: headers,
-        body: body
-    );
-    if(res.statusCode == 200) {
-      return true;
-    }
-    return false;
   }
 
   @override
@@ -133,7 +70,7 @@ class _PendingFriendPageState extends State<PendingFriendPage>{
               color: Colors.green,
               icon: Icons.check,
               onTap: () async {
-                await acceptFriend(user.uuid);
+                await _friendPendingService.confirmFriend(user);
                 _listKey.currentState.removeItem(index, (context, animation) =>
                     slide(user, index, animation),
                     duration: const Duration(milliseconds: 250));
@@ -148,7 +85,7 @@ class _PendingFriendPageState extends State<PendingFriendPage>{
               color: Colors.red,
               icon: Icons.delete,
               onTap: () async {
-                await ignoreFriend(user.uuid);
+                await _friendPendingService.ignoreFriend(user);
                 _listKey.currentState.removeItem(index, (context, animation) =>
                     slide(user, index, animation),
                     duration: const Duration(milliseconds: 250));
@@ -165,29 +102,37 @@ class _PendingFriendPageState extends State<PendingFriendPage>{
         child: Column(
           children: <Widget>[
             Expanded(
-                child: FutureBuilder(
-                    future: getMyPendingFriends(),
-                    builder: (BuildContext context, AsyncSnapshot snapshot) {
-                      if (snapshot.data == null) {
-                        return Container(
-                            child: Center(
-                              child: Text("Loading..."),
-                            )
-                        );
-                      } else {
-                        users = snapshot.data;
-                        return AnimatedList(
-                          key: _listKey,
-                          scrollDirection: Axis.vertical,
-                          shrinkWrap: true,
-                          initialItemCount: users.length,
-                          itemBuilder: (context, index, animation) {
+                child: RefreshIndicator(
+                  child: FutureBuilder(
+                      future: _friendPendingService.refreshCurrentPendingFriends(),
+                      builder: (BuildContext context, AsyncSnapshot snapshot) {
+                        if (snapshot.data == null) {
+                          return Container(
+                              child: Center(
+                                child: Text("Loading..."),
+                              )
+                          );
+                        } else {
+                          users = snapshot.data;
+                          return AnimatedList(
+                            key: _listKey,
+                            scrollDirection: Axis.vertical,
+                            shrinkWrap: true,
+                            initialItemCount: users.length,
+                            itemBuilder: (context, index, animation) {
                               return slide(users[index], index, animation);
-                          },
-                        );
+                            },
+                          );
+                        }
                       }
-                    }
-                )
+                  ),
+                  onRefresh: () async {
+                    //TODO: Fix problem when remove pending friends by reloading
+                    await _friendPendingService.refreshCurrentPendingFriends();
+                    setState(() {
+                    });
+                  },
+                ),
             )
           ],
         )
@@ -197,11 +142,6 @@ class _PendingFriendPageState extends State<PendingFriendPage>{
       backgroundColor: AppColor.mainColor,
       body: makeBody,
     );
-
-  }
-
-  List getUsers() {
-    getMyPendingFriends();
   }
 }
 

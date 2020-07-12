@@ -17,6 +17,8 @@ abstract class FriendPendingServiceBase {
     statePendingFriends = initialPendingFriends;
   }
 
+  Future<List<User>> getCurrentPendingFriendsOrRefresh();
+
   Future<List<User>> refreshCurrentPendingFriends();
 
   Future<bool> confirmFriend(User friend);
@@ -38,8 +40,16 @@ class FriendPendingService extends FriendPendingServiceBase {
   }
 
   @override
+  Future<List<User>> getCurrentPendingFriendsOrRefresh() async {
+    if (currentPendingFriends.length > 0) {
+      return currentPendingFriends;
+    }
+    return refreshCurrentPendingFriends();
+  }
+
+  @override
   Future<List<User>> refreshCurrentPendingFriends() async {
-    List<User> friends = await _friendRepository.getMyFriends();
+    List<User> friends = await _friendRepository.getMyPendingFriends();
     setStatePendingFriends(friends);
     return currentPendingFriends;
   }
