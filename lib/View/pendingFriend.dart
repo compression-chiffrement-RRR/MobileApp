@@ -85,6 +85,7 @@ class _PendingFriendPageState extends State<PendingFriendPage>{
           children: <Widget>[
             Expanded(
                 child: RefreshIndicator(
+                  color: AppColor.thirdColor,
                   child: FutureBuilder(
                       future: _friendPendingService.getCurrentPendingFriendsOrRefresh(),
                       builder: (BuildContext context, AsyncSnapshot snapshot) {

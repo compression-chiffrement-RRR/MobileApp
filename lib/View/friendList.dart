@@ -165,6 +165,7 @@ class _FriendListPageState extends State<FriendListPage>{
             ),
           Expanded(
             child: RefreshIndicator(
+              color: AppColor.thirdColor,
               child: FutureBuilder(
                   future: _friendService.getCurrentFriendsOrRefresh(),
                   builder: (BuildContext context, AsyncSnapshot snapshot) {

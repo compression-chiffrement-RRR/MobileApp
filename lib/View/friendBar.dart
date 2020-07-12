@@ -19,6 +19,7 @@ class _FriendBarState extends State<FriendBar> with SingleTickerProviderStateMix
         appBar: PreferredSize(
           preferredSize: new Size(200, 30),
           child: TabBar(
+            indicatorColor: AppColor.thirdColor,
             tabs: [
               Tab(
                   icon: Icon(Icons.person)
