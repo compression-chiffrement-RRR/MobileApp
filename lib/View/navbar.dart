@@ -1,55 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:mobileappflutter/View/files.dart';
 import 'package:mobileappflutter/Style/color.dart';
-import 'package:mobileappflutter/View/home.dart';
-import 'dart:convert' show json, base64, ascii;
-import 'dart:convert';
 import 'account.dart';
 import 'friendBar.dart';
 
 class Navbar extends StatefulWidget {
-  Navbar(this.jwt, this.payload);
-
-  factory Navbar.fromBase64(String jwt) =>
-      Navbar(
-          jwt,
-          json.decode(
-              ascii.decode(
-                  base64.decode(base64.normalize(jwt.split(".")[1]))
-              )
-          )
-      );
-
-  final String jwt;
-  final Map<String, dynamic> payload;
-
-
   @override
-  _NavbarState createState() => _NavbarState(jwt, payload);
+  _NavbarState createState() => _NavbarState();
 }
 
 class _NavbarState extends State<Navbar>{
+  static final _NavbarState _instance = _NavbarState._internal();
 
-  _NavbarState(this.jwt, this.payload);
-  factory _NavbarState.fromBase64(String jwt) =>
-      _NavbarState(
-          jwt,
-          json.decode(
-              ascii.decode(
-                  base64.decode(base64.normalize(jwt.split(".")[1]))
-              )
-          )
-      );
+  factory _NavbarState() {
+    return _instance;
+  }
 
-  final String jwt;
-  final Map<String, dynamic> payload;
+  _NavbarState._internal();
 
   int _currentIndex = 0;
   final statefulWidgetBuilder = [
     FilesPage(),
     FriendBar(),
-    AccountPage(),
-    HomePage(),
+    AccountPage()
   ];
 
   final topAppBar = AppBar(
@@ -86,11 +59,7 @@ class _NavbarState extends State<Navbar>{
           BottomNavigationBarItem(
               icon: Icon(Icons.person),
               title: Text('Account'),
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            title: Text('Home'),
-          ),
+          )
         ],
         onTap: (index){
           setState(() {

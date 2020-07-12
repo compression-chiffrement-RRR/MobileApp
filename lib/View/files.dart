@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mobileappflutter/Modele/file.dart';
+import 'package:mobileappflutter/Modele/file_basic_information.dart';
 import 'package:mobileappflutter/Style/color.dart';
 import 'friendSharedFiles.dart';
 import 'upload.dart';
@@ -22,7 +22,7 @@ class _FilesPageState extends State<FilesPage>{
   @override
   Widget build(BuildContext context) {
 
-    ListTile makeListTile(SFile file) =>
+    ListTile makeListTile(FileBasicInformation file) =>
         ListTile(
           contentPadding: EdgeInsets.all(1.0),
           leading: Icon(Icons.insert_drive_file, color: Colors.white),
@@ -50,7 +50,7 @@ class _FilesPageState extends State<FilesPage>{
           },
         );
 
-    Card makeCard(SFile file) => Card(
+    Card makeCard(FileBasicInformation file) => Card(
       elevation: 8.0,
       margin: new EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
       child: Container(
@@ -91,31 +91,31 @@ class _FilesPageState extends State<FilesPage>{
 }
 List getFiles() {
   return [
-    SFile(
+    FileBasicInformation(
         name: "test.php",
         isTreated: true,
         creationDate: "01-09-2019"),
-    SFile(
+    FileBasicInformation(
         name: "test.php",
         isTreated: true,
         creationDate: "01-09-2019"),
-    SFile(
+    FileBasicInformation(
         name: "test.php",
         isTreated: true,
         creationDate: "01-09-2019"),
-    SFile(
+    FileBasicInformation(
         name: "test.php",
         isTreated: true,
         creationDate: "01-09-2019"),
-    SFile(
+    FileBasicInformation(
         name: "test.php",
         isTreated: true,
         creationDate: "01-09-2019"),
-    SFile(
+    FileBasicInformation(
         name: "test.php",
         isTreated: true,
         creationDate: "01-09-2019"),
-    SFile(
+    FileBasicInformation(
         name: "test.php",
         isTreated: true,
         creationDate: "01-09-2019"),

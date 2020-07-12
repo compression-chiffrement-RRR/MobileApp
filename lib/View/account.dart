@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:mobileappflutter/Helper/dialog_helper.dart';
 import 'package:mobileappflutter/Modele/user.dart';
-import 'package:http/http.dart' as http;
+import 'package:mobileappflutter/Service/user_service.dart';
 import 'package:mobileappflutter/Style/color.dart';
-import 'dart:convert';
-import 'env.dart';
-import 'login.dart';
 import 'package:shimmer/shimmer.dart';
 
 class AccountPage extends StatefulWidget {
@@ -13,6 +11,8 @@ class AccountPage extends StatefulWidget {
 }
 
 class _AccountPageState extends State<AccountPage> {
+  final UserService _userService = UserService();
+
   final Color textColor = Colors.white;
   bool _statusInformation = true;
   bool _statusSecurity = true;
@@ -25,78 +25,6 @@ class _AccountPageState extends State<AccountPage> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController(text: "somerandomtexttofake");
   final TextEditingController _confirmPasswordController = TextEditingController();
-
-  Future<String> get jwtOrEmpty async {
-    var jwt = await storage.read(key: "jwt");
-    if(jwt == null) return "";
-    return jwt;
-  }
-
-  Future<User> getMyAccount() async {
-    final jwt = await jwtOrEmpty;
-    Map<String, String> headers = {
-      'Content-Type': 'application/json; charset=UTF-8',
-      "Authorization": jwt
-    };
-    var res = await http.get(
-        "$SERVER_IP/api/account/me",
-        headers: headers
-    );
-    if(res.statusCode == 200) {
-      var jsonData = json.decode(res.body);
-      User user = User.fromJson(jsonData);
-      return user;
-    }
-    return null;
-  }
-
-  Future<bool> attemptChangeInformation(String username, String email) async {
-    final jwt = await jwtOrEmpty;
-    final body = jsonEncode({
-      "username": username,
-      "email": email
-    });
-    Map<String,String> headers = {
-      'Content-Type': 'application/json; charset=UTF-8',
-      "Authorization": jwt,
-    };
-    var res = await http.put(
-        '$SERVER_IP/api/account',
-        body: body,
-        headers: headers
-    );
-    if(res.statusCode == 204)
-      return true;
-    return false;
-  }
-
-  Future<bool> attemptChangePassword(String password) async {
-    final jwt = await jwtOrEmpty;
-    final body = jsonEncode({
-      "password": password
-    });
-    Map<String,String> headers = {
-      'Content-Type': 'application/json; charset=UTF-8',
-      "Authorization": jwt,
-    };
-    var res = await http.put(
-        '$SERVER_IP/api/account/password',
-        body: body,
-        headers: headers
-    );
-    if(res.statusCode == 204)
-      return true;
-    return false;
-  }
-
-  void displayDialog(context, title, text) => showDialog(
-    context: context,
-    builder: (context) =>
-        AlertDialog(
-            title: Text(title),
-            content: Text(text)
-        ),
-  );
 
   @override
   Widget build(BuildContext context) {
@@ -117,7 +45,7 @@ class _AccountPageState extends State<AccountPage> {
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: <Widget>[
                         FutureBuilder(
-                          future: getMyAccount(),
+                          future: _userService.refreshCurrentUser(),
                           builder: (context, snapshot) {
                             if (snapshot.data == null) {
                               return Container(
@@ -543,7 +471,10 @@ class _AccountPageState extends State<AccountPage> {
                           ),
                         );
                         _scaffoldKey.currentState.showSnackBar(snackbar);
-                        attemptChangeInformation(_usernameController.text, _emailController.text).then((result) async {
+                        _userService.updateUser(
+                            username: _usernameController.text,
+                            email: _emailController.text
+                        ).then((result) async {
                           if (result) {
                             final snackbar = SnackBar(
                               duration: Duration(seconds: 5),
@@ -564,7 +495,7 @@ class _AccountPageState extends State<AccountPage> {
                             });
                           } else {
                             _scaffoldKey.currentState.hideCurrentSnackBar();
-                            displayDialog(context, 'Info', "Could not update your account information, please retry");
+                            DialogHelper.displayDialog(context, 'Info', "Could not update your account information, please retry");
                           }
                         });
                       }
@@ -657,7 +588,7 @@ class _AccountPageState extends State<AccountPage> {
                               ),
                             );
                             _scaffoldKey.currentState.showSnackBar(snackbar);
-                            attemptChangePassword(_passwordController.text).then((result) async {
+                            _userService.updatePasswordUser(_passwordController.text).then((result) async {
                               if (result) {
                                 final snackbar = SnackBar(
                                   duration: Duration(seconds: 5),
@@ -680,7 +611,7 @@ class _AccountPageState extends State<AccountPage> {
                                 });
                               } else {
                                 _scaffoldKey.currentState.hideCurrentSnackBar();
-                                displayDialog(context, 'Info', "Could not update your password, please retry");
+                                DialogHelper.displayDialog(context, 'Info', "Could not update your password, please retry");
                                 _passwordController.clear();
                                 _confirmPasswordController.clear();
                               }

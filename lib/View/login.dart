@@ -1,22 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:mobileappflutter/Helper/dialog_helper.dart';
+import 'package:mobileappflutter/Service/auth_service.dart';
 import 'package:mobileappflutter/Style/color.dart';
 import 'package:mobileappflutter/Animation/FadeAnimation.dart';
 import 'package:mobileappflutter/View/signup.dart';
 import 'dart:convert' show json, base64, ascii;
 import 'dart:convert';
-import 'env.dart';
 import 'navbar.dart';
 
 final storage = FlutterSecureStorage();
 
 class MyApp extends StatelessWidget {
-  Future<String> get jwtOrEmpty async {
-    var jwt = await storage.read(key: "jwt");
-    if(jwt == null) return "";
-    return jwt;
-  }
+  final _authService = AuthService();
 
   @override
   Widget build(BuildContext context) {
@@ -27,10 +23,10 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       home: FutureBuilder(
-          future: jwtOrEmpty,
+          future: _authService.getStoredToken(),
           builder: (context, snapshot) {
             if(!snapshot.hasData) return CircularProgressIndicator();
-            if(snapshot.data != "") {
+            if(snapshot.data != null) {
               var str = snapshot.data;
               var jwt = str.split(".");
               if(jwt.length !=3) {
@@ -38,7 +34,7 @@ class MyApp extends StatelessWidget {
               } else {
                 var payload = json.decode(ascii.decode(base64.decode(base64.normalize(jwt[1]))));
                 if(DateTime.fromMillisecondsSinceEpoch(payload["exp"]*1000).isAfter(DateTime.now())) {
-                  return Navbar(str, payload);
+                  return Navbar();
                 } else {
                   return LoginPage();
                 }
@@ -52,32 +48,10 @@ class MyApp extends StatelessWidget {
   }
 }
 class LoginPage extends StatelessWidget {
+  final _authService = AuthService();
+
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-
-  void displayDialog(context, title, text) => showDialog(
-    context: context,
-    builder: (context) =>
-        AlertDialog(
-            title: Text(title),
-            content: Text(text)
-        ),
-  );
-
-  Future<String> attemptLogIn(String username, String password) async {
-    final body = jsonEncode({"username": username,"password": password});
-    Map<String,String> headers = {'Content-Type': 'application/json; charset=UTF-8'};
-    var res = await http.post(
-        "$SERVER_IP/login",
-        headers: headers,
-        body: body
-    );
-
-    if(res.statusCode == 200) {
-      return res.headers["authorization"];
-    }
-    return null;
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -140,13 +114,14 @@ class LoginPage extends StatelessWidget {
                                 decoration: BoxDecoration(
                                     border: Border(bottom: BorderSide(color: Colors.grey[200]))
                                 ),
-                                child: TextField(
+                                child: TextFormField(
                                   controller: _usernameController,
                                   decoration: InputDecoration(
                                       hintText: "Username",
                                       hintStyle: TextStyle(color: Colors.grey),
                                       border: InputBorder.none
                                   ),
+                                  validator: (value) => value.length == 0 ? "Please enter your username" : null,
                                 ),
                               ),
                               Container(
@@ -154,7 +129,7 @@ class LoginPage extends StatelessWidget {
                                 decoration: BoxDecoration(
                                     border: Border(bottom: BorderSide(color: Colors.grey[200]))
                                 ),
-                                child: TextField(
+                                child: TextFormField(
                                   obscureText: true,
                                   controller: _passwordController,
                                   decoration: InputDecoration(
@@ -162,6 +137,7 @@ class LoginPage extends StatelessWidget {
                                       hintStyle: TextStyle(color: Colors.grey),
                                       border: InputBorder.none
                                   ),
+                                  validator: (value) => value.length == 0 ? "Please enter your password" : null,
                                 ),
                               ),
                             ],
@@ -181,17 +157,16 @@ class LoginPage extends StatelessWidget {
                           onPressed: () async {
                             var username = _usernameController.text;
                             var password = _passwordController.text;
-                            var jwt = await attemptLogIn(username, password);
+                            var jwt = await _authService.getNewToken(username, password);
                             if(jwt != null) {
-                              storage.write(key: "jwt", value: jwt);
                               Navigator.pushReplacement(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => Navbar.fromBase64(jwt)
+                                      builder: (context) => Navbar()
                                   )
                               );
                             } else {
-                              displayDialog(context, "An Error Occurred", "No account was found matching that username and password");
+                              DialogHelper.displayDialog(context, "Warning", "No account was found matching that username and password");
                             }
                           },
                         ),),
@@ -199,7 +174,7 @@ class LoginPage extends StatelessWidget {
                           child: Text("Create Account", style: TextStyle(color: AppColor.secondaryColor),),
                           onPressed: () {
                             Navigator.push(context, MaterialPageRoute(
-                              builder: (context) => new SignupPage()
+                              builder: (context) => SignUpPage()
                             ));
                           },
                         )),

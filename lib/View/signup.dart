@@ -1,11 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:mobileappflutter/Helper/dialog_helper.dart';
+import 'package:mobileappflutter/Service/user_service.dart';
 import 'package:mobileappflutter/Style/color.dart';
 import 'package:mobileappflutter/animation/FadeAnimation.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
-import 'env.dart';
 
-class SignupPage extends StatelessWidget {
+class SignUpPage extends StatefulWidget {
+  @override
+  State<StatefulWidget> createState() => _SignUpPageState();
+}
+
+class _SignUpPageState extends State<SignUpPage> {
+  final UserService _userService = UserService();
+
   final _formKey = GlobalKey<FormState>();
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   String _username, _email, _password;
@@ -14,32 +20,6 @@ class SignupPage extends StatelessWidget {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _passwordConfirmController = TextEditingController();
-
-  Future<bool> attemptSignUp(String username, String email, String password) async {
-    final body = jsonEncode({
-      "username": username,
-      "email": email,
-      "password": password
-    });
-    Map<String,String> headers = {'Content-Type': 'application/json; charset=UTF-8'};
-    var res = await http.post(
-        '$SERVER_IP/api/account',
-        body: body,
-        headers: headers
-    );
-    if(res.statusCode == 201)
-      return true;
-    return false;
-  }
-
-  void displayDialog(context, title, text) => showDialog(
-    context: context,
-    builder: (context) =>
-        AlertDialog(
-            title: Text(title),
-            content: Text(text)
-        ),
-  );
 
   @override
   Widget build(BuildContext context) {
@@ -156,7 +136,11 @@ class SignupPage extends StatelessWidget {
                       ),
                     );
                     _scaffoldKey.currentState.showSnackBar(snackbar);
-                    attemptSignUp(_username, _email, _password).then((result) async {
+                    _userService.createUser(
+                        username:_username,
+                        email: _email,
+                        password: _password
+                    ).then((result) async {
                       if (result) {
                         final snackbar = SnackBar(
                           duration: Duration(seconds: 30),
@@ -174,7 +158,7 @@ class SignupPage extends StatelessWidget {
                         Navigator.pop(context, true);
                       } else {
                         _scaffoldKey.currentState.hideCurrentSnackBar();
-                        displayDialog(context, 'Info', "Could not create your account, please retry");
+                        DialogHelper.displayDialog(context, 'Info', "Could not create your account, please retry");
                         _passwordController.clear();
                         _passwordConfirmController.clear();
                       }
