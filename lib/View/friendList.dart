@@ -1,13 +1,8 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:mobileappflutter/Modele/user.dart';
+import 'package:mobileappflutter/Service/friend_service.dart';
 import 'package:mobileappflutter/Style/color.dart';
-import 'env.dart';
 import 'friendSharedFiles.dart';
-import 'package:http/http.dart' as http;
-
-import 'login.dart';
 
 
 class FriendListPage extends StatefulWidget {
@@ -17,16 +12,9 @@ class FriendListPage extends StatefulWidget {
 }
 
 class _FriendListPageState extends State<FriendListPage>{
+  final FriendService _friendService = FriendService();
   final _formKey = GlobalKey<FormState>();
   final friendController = TextEditingController();
-
-  Future<String> get jwtOrEmpty async {
-    var jwt = await storage.read(key: "jwt");
-    if(jwt == null) return "";
-    return jwt;
-  }
-
-  set users(Future<List<User>> users) {}
 
   @override
   void dispose() {
@@ -34,77 +22,9 @@ class _FriendListPageState extends State<FriendListPage>{
     super.dispose();
   }
 
-  Future<bool> addFriend(String username) async {
-      final jwt = await jwtOrEmpty;
-      print('addfriend');
-      final user = await searchUser(username);
-      if(user != null) {
-        final body = jsonEncode({"friendUuid": user.uuid});
-        Map<String, String> headers = {
-          'Content-Type': 'application/json; charset=UTF-8',
-          "Authorization": jwt,
-        };
-        var res = await http.post(
-            "$SERVER_IP/api/friend",
-            headers: headers,
-            body: body
-        );
-
-        if (res.statusCode != 200) {
-          return false;
-        }
-        return true;
-      }
-      return false;
-    }
-
-  Future<User> searchUser(String username) async {
-    final jwt = await jwtOrEmpty;
-    print('searchUser');
-    Map<String, String> headers = {
-      'Content-Type': 'application/json; charset=UTF-8',
-      "Authorization": jwt
-    };
-    var res = await http.get(
-        "$SERVER_IP/api/account?username=$username",
-        headers: headers
-    );
-    print(res.body);
-    if (res.statusCode == 200) {
-      return User.fromJson(json.decode(res.body));
-    }
-    else {
-      return null;
-    }
-  }
-
-  Future<List<User>> getMyFriends() async {
-    final jwt = await jwtOrEmpty;
-    Map<String, String> headers = {
-      'Content-Type': 'application/json; charset=UTF-8',
-      "Authorization": jwt
-    };
-    var res = await http.get(
-        "$SERVER_IP/api/friend/",
-        headers: headers
-    );
-    if(res.statusCode == 200) {
-      var jsonData = json.decode(res.body);
-      List<User> users = [];
-      for(var u in jsonData){
-        User user = User.fromJson(u);
-        users.add(user);
-      }
-      
-      return users;
-    }
-    return null;
-  }
-
   @override
   void initState() {
     super.initState();
-    users = getMyFriends();
   }
 
 
@@ -188,7 +108,7 @@ class _FriendListPageState extends State<FriendListPage>{
                     MaterialButton(
                       onPressed: () async {
                         if(_formKey.currentState.validate()) {
-                          if (await addFriend(friendController.text)) {
+                          if (await _friendService.addFriend(friendController.text)) {
                             return showDialog<void>(
                               context: context,
                               builder: (BuildContext context) {
@@ -244,27 +164,34 @@ class _FriendListPageState extends State<FriendListPage>{
               ),
             ),
           Expanded(
-            child: FutureBuilder(
-              future: getMyFriends(),
-              builder: (BuildContext context, AsyncSnapshot snapshot) {
-                if (snapshot.data == null) {
-                  return Container(
-                      child: Center(
-                        child: Text("Loading..."),
-                      )
-                  );
-                } else {
-                  return ListView.builder(
-                    scrollDirection: Axis.vertical,
-                    shrinkWrap: true,
-                    itemCount: snapshot.data.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      print(snapshot.data[index].email);
-                      return makeCard(snapshot.data[index]);
-                    },
-                  );
-                }
-              }
+            child: RefreshIndicator(
+              child: FutureBuilder(
+                  future: _friendService.getCurrentFriendsOrRefresh(),
+                  builder: (BuildContext context, AsyncSnapshot snapshot) {
+                    if (snapshot.data == null) {
+                      return Container(
+                          child: Center(
+                            child: Text("Loading..."),
+                          )
+                      );
+                    } else {
+                      return ListView.builder(
+                        scrollDirection: Axis.vertical,
+                        shrinkWrap: true,
+                        itemCount: snapshot.data.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          print(snapshot.data[index].email);
+                          return makeCard(snapshot.data[index]);
+                        },
+                      );
+                    }
+                  }
+              ),
+              onRefresh: () async {
+                await _friendService.refreshCurrentFriends();
+                setState(() {
+                });
+              },
             )
           )
         ],
@@ -276,10 +203,6 @@ class _FriendListPageState extends State<FriendListPage>{
       body: makeBody,
     );
 
-  }
-
-  List getUsers() {
-    getMyFriends();
   }
 }
 

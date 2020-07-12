@@ -17,9 +17,11 @@ abstract class FriendServiceBase {
     stateFriends = initialFriends;
   }
 
+  Future<List<User>> getCurrentFriendsOrRefresh();
+
   Future<List<User>> refreshCurrentFriends();
 
-  Future<bool> addFriend(User friend);
+  Future<bool> addFriend(String friendUuid);
 
   Future<bool> deleteFriend(User friend);
 }
@@ -38,6 +40,14 @@ class FriendService extends FriendServiceBase {
   }
 
   @override
+  Future<List<User>> getCurrentFriendsOrRefresh() async {
+    if (currentFriends.length > 0) {
+      return currentFriends;
+    }
+    return refreshCurrentFriends();
+  }
+
+  @override
   Future<List<User>> refreshCurrentFriends() async {
     List<User> friends = await _friendRepository.getMyFriends();
     setStateFriends(friends);
@@ -45,8 +55,8 @@ class FriendService extends FriendServiceBase {
   }
 
   @override
-  Future<bool> addFriend(User friend) async {
-    bool success = await _friendRepository.addFriend(friend.uuid);
+  Future<bool> addFriend(String friendUuid) async {
+    bool success = await _friendRepository.addFriend(friendUuid);
     return success;
   }
 
