@@ -1,11 +1,7 @@
-import 'dart:io';
-import 'dart:typed_data';
-
 import 'package:mobileappflutter/Modele/file_account.dart';
 import 'package:mobileappflutter/Modele/file_advanced_information.dart';
 import 'package:mobileappflutter/Modele/file_basic_information.dart';
 import 'package:mobileappflutter/Service/Data/file_repository.dart';
-import 'package:mobileappflutter/Service/file_local_service.dart';
 import 'package:path_provider/path_provider.dart';
 
 abstract class FileServiceBase {
@@ -17,7 +13,6 @@ abstract class FileServiceBase {
 
 class FileService extends FileServiceBase {
   final FileRepository _fileRepository = FileRepository();
-  final FileLocalService _fileLocalService = FileLocalService();
 
   @override
   Future<FileAdvancedInformation> getInformation(String fileUuid) {
@@ -26,6 +21,7 @@ class FileService extends FileServiceBase {
 
   @override
   Future<FileAccount> getAllFiles() async {
+    print("getall");
     FileAccount fileAccount = await _fileRepository.getAllFiles();
     return fileAccount;
   }

@@ -1,5 +1,3 @@
-import 'dart:typed_data';
-
 import 'package:dio/dio.dart';
 import 'package:mobileappflutter/Modele/file_account.dart';
 import 'package:mobileappflutter/Modele/file_advanced_information.dart';
@@ -8,8 +6,6 @@ import 'package:mobileappflutter/Service/auth_service.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:io';
-
-import 'package:path_provider/path_provider.dart';
 
 typedef void OnDownloadProgressCallback(int receivedBytes, int totalBytes);
 typedef void OnUploadProgressCallback(int sentBytes, int totalBytes);

@@ -105,28 +105,35 @@ class _FileListPageState extends State<FileListPage>{
 
     final makeBody = Container(
         // decoration: BoxDecoration(color: AppColor.mainColor),
-        child: FutureBuilder(
-          future: _fileService.getAllFiles(),
-          builder: (context, snapshot) {
-            if (snapshot.data == null) {
-              return Container(
-                  child: Center(
-                    child: Text("Loading..."),
-                  )
-              );
-            } else {
-              FileAccount fileAccount = snapshot.data;
-              return GridView.count(
-                  crossAxisCount: 2,
-                  childAspectRatio: (150 / 130),
-                  children: List.generate(fileAccount.userFilesAuthor.length, (index) {
-                    return Container(
-                      height: 100,
-                      child: makeCard(fileAccount.userFilesAuthor[index]),
-                    );
-                  })
-              );
-            }
+        child: RefreshIndicator(
+          color: AppColor.thirdColor,
+          child: FutureBuilder(
+            future: _fileService.getAllFiles(),
+            builder: (context, snapshot) {
+              if (snapshot.data == null) {
+                return Container(
+                    child: Center(
+                      child: Text("Loading..."),
+                    )
+                );
+              } else {
+                FileAccount fileAccount = snapshot.data;
+                return GridView.count(
+                    crossAxisCount: 2,
+                    childAspectRatio: (150 / 130),
+                    children: List.generate(fileAccount.userFilesAuthor.length, (index) {
+                      return Container(
+                        height: 100,
+                        child: makeCard(fileAccount.userFilesAuthor[index]),
+                      );
+                    })
+                );
+              }
+            },
+          ),
+          onRefresh: () async {
+            setState(() {
+            });
           },
         )
     );
