@@ -1,17 +1,23 @@
+import 'dart:io';
+import 'dart:typed_data';
+
 import 'package:mobileappflutter/Modele/file_account.dart';
 import 'package:mobileappflutter/Modele/file_advanced_information.dart';
 import 'package:mobileappflutter/Modele/file_basic_information.dart';
 import 'package:mobileappflutter/Service/Data/file_repository.dart';
+import 'package:mobileappflutter/Service/file_local_service.dart';
+import 'package:path_provider/path_provider.dart';
 
 abstract class FileServiceBase {
   Future<FileAdvancedInformation> getInformation(String fileUuid);
   Future<FileAccount> getAllFiles();
-  Future<String> downloadFile(FileBasicInformation file);
+  Future<String> downloadFile(FileBasicInformation file, void Function(int, int) onReceiveProgress);
   Future<bool> deleteFile(FileBasicInformation file);
 }
 
 class FileService extends FileServiceBase {
   final FileRepository _fileRepository = FileRepository();
+  final FileLocalService _fileLocalService = FileLocalService();
 
   @override
   Future<FileAdvancedInformation> getInformation(String fileUuid) {
@@ -25,8 +31,15 @@ class FileService extends FileServiceBase {
   }
 
   @override
-  Future<String> downloadFile(FileBasicInformation file) {
-    return _fileRepository.downloadFile(file.uuid);
+  Future<String> downloadFile(FileBasicInformation file, void Function(int, int) onReceiveProgress) async {
+    if (!file.isTreated) {
+      print("Not treated");
+      return null;
+    }
+    String dir = (await getExternalStorageDirectory()).path;
+    String filePath = '$dir/${file.name}';
+    await _fileRepository.downloadFile(file.uuid, filePath, onReceiveProgress);
+    return filePath;
   }
 
   @override

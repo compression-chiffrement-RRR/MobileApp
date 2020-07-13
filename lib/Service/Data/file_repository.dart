@@ -1,3 +1,6 @@
+import 'dart:typed_data';
+
+import 'package:dio/dio.dart';
 import 'package:mobileappflutter/Modele/file_account.dart';
 import 'package:mobileappflutter/Modele/file_advanced_information.dart';
 import 'package:mobileappflutter/Service/Data/base_repository.dart';
@@ -5,6 +8,11 @@ import 'package:mobileappflutter/Service/auth_service.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:io';
+
+import 'package:path_provider/path_provider.dart';
+
+typedef void OnDownloadProgressCallback(int receivedBytes, int totalBytes);
+typedef void OnUploadProgressCallback(int sentBytes, int totalBytes);
 
 class FileRepository extends BaseRepository {
   final AuthService _authService = AuthService();
@@ -42,16 +50,24 @@ class FileRepository extends BaseRepository {
     return null;
   }
 
-  Future<String> downloadFile(String fileUuid) async {
+  Future<bool> downloadFile(String fileUuid, String savePath, void Function(int, int) onReceiveProgress) async {
+    Dio dio = Dio();
+
     Map<String, String> headers = {
       'Content-Type': ContentType.json.toString(),
       "Authorization": _authService.currentToken
     };
-    var res = await http.get("$downloadFileUrl/$fileUuid", headers: headers);
-    if (res.statusCode == 200) {
-      //TODO: download, save file
-    }
-    return null;
+
+    dio.download(
+      "$downloadFileUrl/$fileUuid",
+      savePath,
+      onReceiveProgress: onReceiveProgress,
+      deleteOnError: true,
+      options: Options(
+        headers: headers
+      )
+    );
+    return true;
   }
 
   Future<bool> deleteFile(String fileUuid) async {

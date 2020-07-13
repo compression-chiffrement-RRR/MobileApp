@@ -27,7 +27,10 @@ dependencies:
   simple_animations: ^2.2.1
   shimmer: ^1.1.1
   flutter_slidable: ^0.4.7
-
+  path_provider: ^1.6.11
+  file_utils: ^0.1.4
+  percent_indicator: ^2.1.5
+  enum_to_string: ^1.0.9
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.

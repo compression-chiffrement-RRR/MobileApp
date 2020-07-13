@@ -5,6 +5,7 @@ import 'package:mobileappflutter/Modele/file_basic_information.dart';
 import 'package:mobileappflutter/Service/file_service.dart';
 import 'package:mobileappflutter/Style/color.dart';
 import 'package:mobileappflutter/View/file_collaborator_manage.dart';
+import 'package:mobileappflutter/View/file_downloader.dart';
 import 'friendSharedFiles.dart';
 import 'upload.dart';
 
@@ -49,7 +50,9 @@ class _FileListPageState extends State<FileListPage>{
                 await _fileService.deleteFile(file);
                 break;
               case FileAction.download:
-                // TODO: Handle this case.
+                Navigator.push(context, MaterialPageRoute(
+                    builder: (context) => FileDownloaderPage(fileBasicInformation: file),
+                ));
                 break;
               case FileAction.share:
                 Navigator.push(context, MaterialPageRoute(
