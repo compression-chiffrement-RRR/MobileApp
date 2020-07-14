@@ -298,6 +298,7 @@ class _AccountPageState extends State<AccountPage> {
                                                 ),
                                                 controller: _emailController,
                                                 enabled: !_statusInformation,
+                                                keyboardType: TextInputType.emailAddress,
                                                 style: TextStyle(
                                                   color: textColor,
                                                 ),

@@ -5,6 +5,7 @@ import 'package:mobileappflutter/Modele/file_basic_information.dart';
 import 'package:mobileappflutter/Service/file_service.dart';
 import 'package:mobileappflutter/Style/color.dart';
 import 'package:mobileappflutter/View/file_collaborator_manage.dart';
+import 'package:mobileappflutter/View/file_downloader.dart';
 import 'friendSharedFiles.dart';
 import 'upload.dart';
 
@@ -49,7 +50,9 @@ class _FileListPageState extends State<FileListPage>{
                 await _fileService.deleteFile(file);
                 break;
               case FileAction.download:
-                // TODO: Handle this case.
+                Navigator.push(context, MaterialPageRoute(
+                    builder: (context) => FileDownloaderPage(fileBasicInformation: file),
+                ));
                 break;
               case FileAction.share:
                 Navigator.push(context, MaterialPageRoute(
@@ -102,28 +105,35 @@ class _FileListPageState extends State<FileListPage>{
 
     final makeBody = Container(
         // decoration: BoxDecoration(color: AppColor.mainColor),
-        child: FutureBuilder(
-          future: _fileService.getAllFiles(),
-          builder: (context, snapshot) {
-            if (snapshot.data == null) {
-              return Container(
-                  child: Center(
-                    child: Text("Loading..."),
-                  )
-              );
-            } else {
-              FileAccount fileAccount = snapshot.data;
-              return GridView.count(
-                  crossAxisCount: 2,
-                  childAspectRatio: (150 / 130),
-                  children: List.generate(fileAccount.userFilesAuthor.length, (index) {
-                    return Container(
-                      height: 100,
-                      child: makeCard(fileAccount.userFilesAuthor[index]),
-                    );
-                  })
-              );
-            }
+        child: RefreshIndicator(
+          color: AppColor.thirdColor,
+          child: FutureBuilder(
+            future: _fileService.getAllFiles(),
+            builder: (context, snapshot) {
+              if (snapshot.data == null) {
+                return Container(
+                    child: Center(
+                      child: Text("Loading..."),
+                    )
+                );
+              } else {
+                FileAccount fileAccount = snapshot.data;
+                return GridView.count(
+                    crossAxisCount: 2,
+                    childAspectRatio: (150 / 130),
+                    children: List.generate(fileAccount.userFilesAuthor.length, (index) {
+                      return Container(
+                        height: 100,
+                        child: makeCard(fileAccount.userFilesAuthor[index]),
+                      );
+                    })
+                );
+              }
+            },
+          ),
+          onRefresh: () async {
+            setState(() {
+            });
           },
         )
     );

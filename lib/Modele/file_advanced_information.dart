@@ -36,7 +36,7 @@ class FileAdvancedInformation implements FileBasicInformation {
         isTreated: json["isTreated"],
         isError: json["isError"],
         isTemporary: json["isTemporary"],
-        processes: json["processes"],
+        processes: (json["processes"] as List<dynamic>).map((e) => FileProcess.fromJson(e)).toList(),
         creationDate: json["creationDate"]
     );
   }

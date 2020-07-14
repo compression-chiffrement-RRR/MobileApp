@@ -52,6 +52,7 @@ class WorkerRepository extends BaseRepository {
 
   Future<FileBasicInformation> unprocessFile(String fileUuid, TaskUnprocessFile taskUnprocessFile) async {
     final body = jsonEncode(taskUnprocessFile);
+    print(body);
     Map<String, String> headers = {
       'Content-Type': ContentType.json.toString(),
       "Authorization": _authService.currentToken
