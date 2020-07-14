@@ -30,7 +30,6 @@ class _FileCollaboratorManagePage extends State<FileCollaboratorManagePage> {
   _FileCollaboratorManagePage(this._basicInformation);
   final FileBasicInformation _basicInformation;
 
-
   @override
   void dispose() {
     friendController.dispose();
@@ -83,7 +82,6 @@ class _FileCollaboratorManagePage extends State<FileCollaboratorManagePage> {
                     DialogHelper.displayDialog(context, "Error", 'An error occured, cannot add a collaborator');
                   }
                 }
-
               },
             ),
           ),
@@ -202,14 +200,14 @@ class _FileCollaboratorManagePage extends State<FileCollaboratorManagePage> {
     );
 
     final appBar = AppBar(
-      elevation: 0,
+      elevation: 20,
       brightness: Brightness.dark,
       backgroundColor: AppColor.mainColor,
       leading: IconButton(
         onPressed: () {
           Navigator.pop(context);
         },
-        icon: Icon(Icons.arrow_back_ios, size: 20, color: Colors.black,),
+        icon: Icon(Icons.arrow_back_ios, size: 20, color: AppColor.lightedMainColor2),
       ),
     );
 

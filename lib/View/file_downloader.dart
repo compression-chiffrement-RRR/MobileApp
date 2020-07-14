@@ -64,7 +64,7 @@ class _FileDownloaderPage extends State<FileDownloaderPage> {
           onPressed: () {
             Navigator.pop(context);
           },
-          icon: Icon(Icons.arrow_back_ios, size: 20, color: Colors.black,),
+          icon: Icon(Icons.arrow_back_ios, size: 20, color: AppColor.lightedMainColor2),
         ),
       ),
       body: SingleChildScrollView(
