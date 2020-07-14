@@ -7,7 +7,7 @@ import 'package:mobileappflutter/Style/color.dart';
 import 'package:mobileappflutter/View/file_collaborator_manage.dart';
 import 'package:mobileappflutter/View/file_downloader.dart';
 import 'friendSharedFiles.dart';
-import 'upload.dart';
+import 'file_uploader.dart';
 
 enum FileAction { download, share, delete }
 
@@ -144,7 +144,7 @@ class _FileListPageState extends State<FileListPage>{
         Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) => UploadPage()));
+                builder: (context) => FileUploaderPage()));
       },
       child: Icon(Icons.file_upload),
       backgroundColor: AppColor.mainColor,

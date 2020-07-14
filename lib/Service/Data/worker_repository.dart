@@ -16,11 +16,15 @@ class WorkerRepository extends BaseRepository {
   final String unprocessFileUrl = "${BaseRepository.apiEndpoint}/api/worker/retrieveFile";
 
   Future<FileBasicInformation> uploadFile({TaskProcessFile task, String path, String filename}) async {
+    String taskJson = json.encode(task);
+
+    print(taskJson);
+
     Dio dio = new Dio();
 
     FormData formData = FormData.fromMap({
-      "file": await MultipartFile.fromFile(path, filename: "uploadedFile.test"),
-      "tasks": MultipartFile.fromString(json.encode(task), contentType: new MediaType("application", "json"))
+      "file": await MultipartFile.fromFile(path, filename: filename),
+      "tasks": MultipartFile.fromString(taskJson, contentType: new MediaType("application", "json"))
     });
 
     Map<String, String> headers = {
@@ -33,8 +37,7 @@ class WorkerRepository extends BaseRepository {
           contentType: "multipart/form-data"
       ));
       if (res.statusCode == 202) {
-        var jsonData = json.decode(res.data);
-        FileBasicInformation fileBasicInformation = FileBasicInformation.fromJson(jsonData);
+        FileBasicInformation fileBasicInformation = FileBasicInformation.fromJson(res.data);
         return fileBasicInformation;
       }
     } on DioError catch(e) {

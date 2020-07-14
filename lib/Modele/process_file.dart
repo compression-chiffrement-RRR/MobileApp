@@ -5,13 +5,22 @@ class ProcessFile {
   String name;
   String password;
 
-  ProcessFile.fromCipher({CipherTaskType type, String password}) {
-    this.name = type.toString();
+  ProcessFile.fromCipher({CipherTaskType type}) {
+    this.name = type.toString().split(".")[1];
     this.password = password;
   }
 
-  ProcessFile.fromCompress({CompressTaskType type, String password}) {
-    this.name = type.toString();
+  ProcessFile.fromCompress({CompressTaskType type}) {
+    this.name = type.toString().split(".")[1];
+  }
+
+  void setPassword(String password) {
     this.password = password;
   }
+
+  Map<String, dynamic> toJson() =>
+      {
+        'name': name,
+        'password': password
+      };
 }
