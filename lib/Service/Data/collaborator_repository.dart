@@ -46,7 +46,7 @@ class CollaboratorRepository extends BaseRepository {
     Map<String, String> headers = {
       "Authorization": _authService.currentToken,
     };
-    var res = await http.delete("$removeCollaboratorsUrl/$fileUuid?", headers: headers);
+    var res = await http.delete("$removeCollaboratorsUrl/$fileUuid?collaboratorUuid=$collaboratorUuid", headers: headers);
     if (res.statusCode == 204) return true;
     return false;
   }

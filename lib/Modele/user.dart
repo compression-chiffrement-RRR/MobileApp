@@ -13,4 +13,8 @@ class User {
       email: json['email'],
     );
   }
+
+  Map<String, String> toObject(){
+    return {"uuid": this.uuid, "username": this.username, "email": this.email};
+  }
 }

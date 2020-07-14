@@ -53,7 +53,7 @@ class _FileListPageState extends State<FileListPage>{
                 break;
               case FileAction.share:
                 Navigator.push(context, MaterialPageRoute(
-                    builder: (context) => FileCollaboratorManagePage()
+                    builder: (context) => FileCollaboratorManagePage(basicInformation: file)
                 ));
                 break;
             }

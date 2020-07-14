@@ -4,7 +4,6 @@ import 'package:mobileappflutter/Service/friend_service.dart';
 import 'package:mobileappflutter/Style/color.dart';
 import 'friendSharedFiles.dart';
 
-
 class FriendListPage extends StatefulWidget {
 
   @override
@@ -26,7 +25,6 @@ class _FriendListPageState extends State<FriendListPage>{
   void initState() {
     super.initState();
   }
-
 
   @override
   Widget build(BuildContext context) {

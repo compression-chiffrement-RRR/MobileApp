@@ -151,7 +151,7 @@ class _UploadPageState extends State<UploadPage>{
                                 compressionValue = newValue;
                               });
                             },
-                            items: <String>['none', 'COMPRESS_LZ78']
+                            items: <String>['none', 'COMPRESS_HUFFMAN']
                                 .map<DropdownMenuItem<String>>((String value) {
                               return DropdownMenuItem<String>(
                                 value: value,

@@ -23,7 +23,7 @@ class CollaboratorService extends CollaboratorServiceBase {
   Future<bool> addCollaborators({FileBasicInformation fileBasicInformation, List<User> collaborators}) {
     return _collaboratorRepository.addCollaborators(
         fileBasicInformation.uuid,
-        collaborators.map((e) => e.uuid));
+        collaborators.map((e) => e.uuid).toList());
   }
 
   @override
