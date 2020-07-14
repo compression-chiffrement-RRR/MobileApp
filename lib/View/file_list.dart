@@ -6,6 +6,7 @@ import 'package:mobileappflutter/Service/file_service.dart';
 import 'package:mobileappflutter/Style/color.dart';
 import 'package:mobileappflutter/View/file_collaborator_manage.dart';
 import 'package:mobileappflutter/View/file_downloader.dart';
+import 'package:shimmer/shimmer.dart';
 import 'fileDetail.dart';
 import 'file_uploader.dart';
 
@@ -86,22 +87,39 @@ class _FileListPageState extends State<FileListPage>{
           },
         );
 
-    Card makeCard(FileBasicInformation file) => Card(
-      elevation: 0.0,
-      margin: new EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
-      color: AppColor.mainColor,
-      child: Container(
-        child: Column(
-          children: <Widget>[
-            ClipRRect(
-              borderRadius: BorderRadius.circular(8.0),
-              child: Image.network("https://via.placeholder.com/150x100"),
-            ),
-            makeListTile(file)
-          ],
-        ),
-      ),
-    );
+    Container makeCardContent(FileBasicInformation file) =>
+        Container(
+          child: Column(
+            children: <Widget>[
+              SizedBox(height: 10,),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(8.0),
+                child: Image.network("https://via.placeholder.com/150x100"),
+              ),
+              makeListTile(file)
+            ],
+          ),
+        );
+
+    Container makeCard(FileBasicInformation file) =>
+        Container(
+          child: Card(
+            elevation: 0.0,
+            margin: new EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
+            color: AppColor.mainColor,
+            child: file.isError ? Shimmer.fromColors(
+              baseColor: Colors.red[800],
+              highlightColor: Colors.red[500],
+              enabled: true,
+              child: makeCardContent(file)
+            ) : !file.isTreated ? Shimmer.fromColors(
+                baseColor: Colors.grey[500],
+                highlightColor: Colors.grey[200],
+                enabled: true,
+                child: makeCardContent(file)
+            ) : makeCardContent(file)
+          ),
+        );
 
     final makeBody = Container(
         // decoration: BoxDecoration(color: AppColor.mainColor),
