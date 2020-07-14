@@ -6,7 +6,7 @@ class DetailPage extends StatelessWidget {
   Widget build(BuildContext context) {
 
     return Scaffold(
-      body: Center(child: Text('Vous ne partagez pas encore de fichiers'))
+      body: Center(child: Text('information du fichier'))
     );
   }
 }

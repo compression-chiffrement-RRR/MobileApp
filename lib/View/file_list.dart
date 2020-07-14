@@ -6,7 +6,7 @@ import 'package:mobileappflutter/Service/file_service.dart';
 import 'package:mobileappflutter/Style/color.dart';
 import 'package:mobileappflutter/View/file_collaborator_manage.dart';
 import 'package:mobileappflutter/View/file_downloader.dart';
-import 'friendSharedFiles.dart';
+import 'fileDetail.dart';
 import 'file_uploader.dart';
 
 enum FileAction { download, share, delete }

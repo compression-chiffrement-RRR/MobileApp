@@ -22,7 +22,7 @@ class _FriendBarState extends State<FriendBar> with SingleTickerProviderStateMix
             indicatorColor: AppColor.thirdColor,
             tabs: [
               Tab(
-                  icon: Icon(Icons.person)
+                icon: Icon(Icons.person),
               ),
               Tab(
                   icon: Icon(Icons.mail)

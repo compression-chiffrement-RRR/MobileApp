@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:mobileappflutter/Helper/dialog_helper.dart';
 import 'package:mobileappflutter/Modele/user.dart';
 import 'package:mobileappflutter/Service/friend_service.dart';
 import 'package:mobileappflutter/Style/color.dart';
-import 'friendSharedFiles.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
+
 
 class FriendListPage extends StatefulWidget {
 
@@ -29,48 +31,52 @@ class _FriendListPageState extends State<FriendListPage>{
   @override
   Widget build(BuildContext context) {
 
-    ListTile makeListTile(User user) => ListTile(
-      contentPadding:
-      EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
-      leading: Container(
-        padding: EdgeInsets.only(right: 12.0),
-        decoration: new BoxDecoration(
-            border: new Border(
-                right: new BorderSide(width: 1.0, color: Colors.white24))),
-        child: Icon(Icons.person, color: Colors.white),
+    Slidable slide(User user, int index) => Slidable(
+      delegate: new SlidableDrawerDelegate(),
+      actionExtentRatio: 0.25,
+      child: new Card(
+        elevation: 8.0,
+        margin: new EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
+        child: Container(
+          decoration: BoxDecoration(color: AppColor.secondaryColor),
+          child: new ListTile(
+            contentPadding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+            leading: Container(
+              padding: EdgeInsets.only(right: 12.0),
+              decoration: new BoxDecoration(
+                  border: new Border(
+                      right: new BorderSide(width: 1.0, color: Colors.white24))),
+              child: Icon(Icons.person, color: Colors.white),
+            ),
+            title: new Text(
+              user.username,
+              style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+            ),
+          ),
+        ),
       ),
-      title: Text(
-        user.username,
-        style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-      ),
-      subtitle: Row(
-        children: <Widget>[
-          Expanded(
-            flex: 4,
-            child: Padding(
-                padding: EdgeInsets.only(left: 10.0),
-                child: Text(user.email,
-                    style: TextStyle(color: Colors.white))),
-          )
-        ],
-      ),
-      trailing: Icon(Icons.keyboard_arrow_right, color: Colors.white, size: 30.0),
-      onTap: () {
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => DetailPage()));
-      },
+      secondaryActions: <Widget>[
+        new Card(
+          margin: new EdgeInsets.symmetric(horizontal: 0, vertical: 6.0),
+          child: new IconSlideAction(
+            caption: 'refuse',
+            color: Colors.red,
+            icon: Icons.delete,
+            onTap: () async {
+              bool res = await _friendService.deleteFriend(user);
+              if(res){
+                setState(() {
+                });
+              }
+              else{
+                DialogHelper.displayDialog(context, "Error", 'An error occured, cannot delete this friend');
+              }
+            },
+          ),
+        ),
+      ],
     );
 
-    Card makeCard(User user) => Card(
-      elevation: 8.0,
-      margin: new EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
-      child: Container(
-        decoration: BoxDecoration(color: AppColor.secondaryColor),
-        child: makeListTile(user),
-      ),
-    );
 
     final makeBody = Container(
       child: Column(
@@ -179,7 +185,7 @@ class _FriendListPageState extends State<FriendListPage>{
                         shrinkWrap: true,
                         itemCount: snapshot.data.length,
                         itemBuilder: (BuildContext context, int index) {
-                          return makeCard(snapshot.data[index]);
+                          return slide(snapshot.data[index], index);
                         },
                       );
                     }

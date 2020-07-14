@@ -54,16 +54,17 @@ class _FileDownloaderPage extends State<FileDownloaderPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppColor.mainColor,
       key: _scaffoldKey,
       appBar: AppBar(
-        elevation: 1,
+        elevation: 20,
         brightness: Brightness.dark,
-        backgroundColor: Colors.white,
+        backgroundColor: AppColor.mainColor,
         leading: IconButton(
           onPressed: () {
             Navigator.pop(context);
           },
-          icon: Icon(Icons.arrow_back_ios, size: 20, color: Colors.black,),
+          icon: Icon(Icons.arrow_back_ios, size: 20, color: AppColor.lightedMainColor2),
         ),
       ),
       body: SingleChildScrollView(
@@ -77,13 +78,13 @@ class _FileDownloaderPage extends State<FileDownloaderPage> {
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               style: TextStyle(
-                  color: Colors.black,
+                  color: AppColor.lightedMainColor2,
                   fontSize: 18.0,
                   fontWeight: FontWeight.bold),
             ),
-            !_fileBasicInformation.isTreated ? Icon(Icons.not_interested, color: Colors.black): Container(),
+            !_fileBasicInformation.isTreated ? Icon(Icons.not_interested, color: AppColor.lightedMainColor): Container(),
             Divider(
-              color: Colors.black,
+              color: AppColor.lightedMainColor,
               height: 50,
               thickness: 1,
               indent: 70,
@@ -102,7 +103,7 @@ class _FileDownloaderPage extends State<FileDownloaderPage> {
             ),
             _askUnprocessFile && !_downloadingFile ? makeFormUnprocess(_fileAdvancedInformation) : Container(),
             Divider(
-              color: Colors.black,
+              color: AppColor.lightedMainColor,
               height: 50,
               thickness: 1,
               indent: 70,
@@ -120,7 +121,7 @@ class _FileDownloaderPage extends State<FileDownloaderPage> {
   RaisedButton makeButtonDownloadWithProcessApplied(FileBasicInformation fileBasicInformation) =>
       RaisedButton(
         textColor: Colors.white,
-        color: AppColor.thirdColor,
+        color: AppColor.lightedMainColor,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20),
         ),
@@ -155,7 +156,7 @@ class _FileDownloaderPage extends State<FileDownloaderPage> {
   RaisedButton makeButtonDownloadWithoutProcessApplied(FileBasicInformation fileBasicInformation) =>
       RaisedButton(
         textColor: Colors.white,
-        color: AppColor.thirdColor,
+        color: AppColor.lightedMainColor,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20),
         ),
@@ -318,10 +319,11 @@ class _FileDownloaderPage extends State<FileDownloaderPage> {
         Text(label, style: TextStyle(
             fontSize: 15,
             fontWeight: FontWeight.w400,
-            color: Colors.black87
+            color: AppColor.lightedMainColor2
         ),),
         SizedBox(height: 5,),
         TextFormField(
+          style: TextStyle(color: AppColor.lightedMainColor2),
           controller: controller,
           obscureText: obscureText,
           autocorrect: false,
@@ -332,10 +334,10 @@ class _FileDownloaderPage extends State<FileDownloaderPage> {
           decoration: InputDecoration(
             contentPadding: EdgeInsets.symmetric(vertical: 0, horizontal: 10),
             enabledBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: Colors.grey[400])
+                borderSide: BorderSide(color: AppColor.lightedMainColor2)
             ),
             border: OutlineInputBorder(
-                borderSide: BorderSide(color: Colors.grey[400])
+                borderSide: BorderSide(color: AppColor.lightedMainColor2)
             ),
           ),
         ),
@@ -354,7 +356,7 @@ class _FileDownloaderPage extends State<FileDownloaderPage> {
                 child: Text(
                   'Download Information',
                   style: TextStyle(
-                      color: Colors.black,
+                      color: AppColor.lightedMainColor2,
                       fontSize: 18.0,
                       fontWeight: FontWeight.bold),
                 ),
@@ -368,7 +370,7 @@ class _FileDownloaderPage extends State<FileDownloaderPage> {
                     child: Text(
                       'Status process',
                       style: TextStyle(
-                          color: Colors.black,
+                          color: AppColor.lightedMainColor2,
                           fontSize: 12.0,
                           fontWeight: FontWeight.bold),
                     ),
@@ -388,10 +390,6 @@ class _FileDownloaderPage extends State<FileDownloaderPage> {
                 ],
               ),
             ),
-            /*SizedBox(
-              height: 30,
-            ),*/
-            //makeButtonLinkToFileOnSystem()
           ],
         ),
       );
@@ -407,7 +405,7 @@ class _FileDownloaderPage extends State<FileDownloaderPage> {
                 child: Text(
                   'Unprocess Information',
                   style: TextStyle(
-                      color: Colors.black,
+                      color: AppColor.lightedMainColor2,
                       fontSize: 18.0,
                       fontWeight: FontWeight.bold),
                 ),
@@ -421,7 +419,7 @@ class _FileDownloaderPage extends State<FileDownloaderPage> {
                     child: Text(
                       'Status process: Waiting unprocess your file',
                       style: TextStyle(
-                          color: Colors.black,
+                          color: AppColor.lightedMainColor2,
                           fontSize: 12.0,
                           fontWeight: FontWeight.bold),
                     ),
@@ -455,18 +453,5 @@ class _FileDownloaderPage extends State<FileDownloaderPage> {
                 fontWeight: FontWeight.bold),
           ),
         ),
-      );
-
-  RaisedButton makeButtonLinkToFileOnSystem() =>
-      RaisedButton(
-        textColor: Colors.white,
-        color: AppColor.thirdColor,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
-        ),
-        padding: EdgeInsets.symmetric(horizontal: 50, vertical: 10),
-        child: Text("Show file", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),),
-        onPressed: () async {
-        },
       );
 }
