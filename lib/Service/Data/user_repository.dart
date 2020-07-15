@@ -29,6 +29,20 @@ class UserRepository extends BaseRepository {
     return null;
   }
 
+  Future<User> getUserByUsername(String username) async {
+    Map<String, String> headers = {
+      'Content-Type': ContentType.json.toString(),
+      "Authorization": _authService.currentToken
+    };
+    var res = await http.get("$getUserUrl?username=$username", headers: headers);
+    if (res.statusCode == 200) {
+      var jsonData = json.decode(res.body);
+      User user = User.fromJson(jsonData);
+      return user;
+    }
+    return null;
+  }
+
   Future<bool> createNewUser(
       String username, String email, String password) async {
     final body = jsonEncode(

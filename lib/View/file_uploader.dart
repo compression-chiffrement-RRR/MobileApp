@@ -270,10 +270,22 @@ class _FileUploaderPageState extends State<FileUploaderPage> {
             onPressed: () async {
               if (_formKey.currentState.validate() && _path != null && _filenameController.text != null) {
                 _formKey.currentState.save();
+                final snackbar = SnackBar(
+                  duration: Duration(seconds: 900),
+                  content: Row(
+                    children: <Widget>[
+                      CircularProgressIndicator(),
+                      Text("  File uploading ...")
+                    ],
+                  ),
+                );
+                _scaffoldKey.currentState.showSnackBar(snackbar);
                 FileBasicInformation fileBasicInformation = await _workerService.uploadFile(path: _path, filename: _filenameController.text, task: _taskProcessFile);
                 if (fileBasicInformation == null) {
+                  _scaffoldKey.currentState.hideCurrentSnackBar();
                   DialogHelper.displayDialog(context, "Error during upload", "Upload file fail, please retry");
                 } else {
+                  _scaffoldKey.currentState.hideCurrentSnackBar();
                   final snackbar = SnackBar(
                     duration: Duration(seconds: 3),
                     content: Row(
@@ -285,6 +297,8 @@ class _FileUploaderPageState extends State<FileUploaderPage> {
                   );
                   _scaffoldKey.currentState.showSnackBar(snackbar);
                   resetState();
+                  await Future.delayed(Duration(seconds: 1));
+                  Navigator.pop(context, true);
                 }
               }
             },

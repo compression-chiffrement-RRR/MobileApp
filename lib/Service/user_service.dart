@@ -19,6 +19,8 @@ abstract class UserServiceBase {
 
   Future<User> refreshCurrentUser();
 
+  Future<User> getUserByUsername(String username);
+
   Future<bool> createUser({String username, String email, String password});
 
   Future<bool> updateUser({String username, String email});
@@ -46,6 +48,12 @@ class UserService extends UserServiceBase {
     User user = await _userRepository.getCurrentUser();
     setStateUser(user);
     return currentUser;
+  }
+
+  @override
+  Future<User> getUserByUsername(String username) async {
+    User user = await _userRepository.getUserByUsername(username);
+    return user;
   }
 
   @override

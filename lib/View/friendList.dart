@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:mobileappflutter/Helper/dialog_helper.dart';
 import 'package:mobileappflutter/Modele/user.dart';
 import 'package:mobileappflutter/Service/friend_service.dart';
+import 'package:mobileappflutter/Service/user_service.dart';
 import 'package:mobileappflutter/Style/color.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 
@@ -14,6 +15,7 @@ class FriendListPage extends StatefulWidget {
 
 class _FriendListPageState extends State<FriendListPage>{
   final FriendService _friendService = FriendService();
+  final UserService _userService = UserService();
   final _formKey = GlobalKey<FormState>();
   final friendController = TextEditingController();
 
@@ -112,13 +114,18 @@ class _FriendListPageState extends State<FriendListPage>{
                     MaterialButton(
                       onPressed: () async {
                         if(_formKey.currentState.validate()) {
-                          if (await _friendService.addFriend(friendController.text)) {
+                          User friend = await _userService.getUserByUsername(friendController.text);
+                          if (friend == null) {
+                            friendController.clear();
+                            return DialogHelper.displayDialog(context, "Cannot find user", "User ${friendController.text} cannot be found");
+                          }
+                          if (await _friendService.addFriend(friend.uuid)) {
                             return showDialog<void>(
                               context: context,
                               builder: (BuildContext context) {
                                 return AlertDialog(
                                   title: Text('Friend Added'),
-                                  content: const Text("successfull"),
+                                  content: Text("Invitation to ${friendController.text} as sent successfully"),
                                   actions: <Widget>[
                                     FlatButton(
                                       child: Text('Ok'),

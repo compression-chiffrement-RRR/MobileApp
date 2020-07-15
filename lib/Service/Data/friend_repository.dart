@@ -59,8 +59,9 @@ class FriendRepository extends BaseRepository {
       'Content-Type': ContentType.json.toString(),
       "Authorization": _authService.currentToken
     };
+    print(body);
     var res = await http.post(addFriendUrl, headers: headers, body: body);
-
+    print(res.body);
     if (res.statusCode == 200) return true;
     return false;
   }
@@ -93,8 +94,9 @@ class FriendRepository extends BaseRepository {
       "Authorization": _authService.currentToken
     };
     var res = await http.delete(
-        "$deleteFriendUrl/$friendUuid",
+        "$deleteFriendUrl?friendUuid=$friendUuid",
         headers: headers);
+    print(res.body);
     if (res.statusCode == 204) return true;
     return false;
   }
