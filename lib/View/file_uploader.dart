@@ -347,7 +347,7 @@ class _FileUploaderPageState extends State<FileUploaderPage> {
                 children: <Widget>[
                   Align(
                     child: Text(
-                      'Status upload',
+                      'Upload status',
                       style: TextStyle(
                           color: AppColor.lightedMainColor2,
                           fontSize: 12.0,

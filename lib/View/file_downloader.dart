@@ -366,7 +366,7 @@ class _FileDownloaderPage extends State<FileDownloaderPage> {
                 children: <Widget>[
                   Align(
                     child: Text(
-                      'Status process',
+                      'Process status',
                       style: TextStyle(
                           color: AppColor.lightedMainColor2,
                           fontSize: 12.0,
