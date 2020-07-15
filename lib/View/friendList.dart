@@ -116,48 +116,15 @@ class _FriendListPageState extends State<FriendListPage>{
                         if(_formKey.currentState.validate()) {
                           User friend = await _userService.getUserByUsername(friendController.text);
                           if (friend == null) {
+                            DialogHelper.displayDialog(context, "Cannot find user", "User ${friendController.text} cannot be found");
                             friendController.clear();
-                            return DialogHelper.displayDialog(context, "Cannot find user", "User ${friendController.text} cannot be found");
+                            return;
                           }
                           if (await _friendService.addFriend(friend.uuid)) {
-                            return showDialog<void>(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return AlertDialog(
-                                  title: Text('Friend Added'),
-                                  content: Text("Invitation to ${friendController.text} as sent successfully"),
-                                  actions: <Widget>[
-                                    FlatButton(
-                                      child: Text('Ok'),
-                                      onPressed: () {
-                                        friendController.clear();
-                                        Navigator.of(context).pop();
-                                      },
-                                    ),
-                                  ],
-                                );
-                              },
-                            );
+                            return DialogHelper.displayDialog(context, 'Friend Added', "Invitation to ${friendController.text} as sent successfully");
                           }
                           else {
-                            return showDialog<void>(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return AlertDialog(
-                                  title: Text('Friend Not Added'),
-                                  content: const Text("error"),
-                                  actions: <Widget>[
-                                    FlatButton(
-                                      child: Text('Ok'),
-                                      onPressed: () {
-                                        friendController.clear();
-                                        Navigator.of(context).pop();
-                                      },
-                                    ),
-                                  ],
-                                );
-                              },
-                            );
+                            return DialogHelper.displayDialog(context, 'Friend Not Added', "Error append when adding ${friendController.text}, please retry later");
                           }
                         }
                       },

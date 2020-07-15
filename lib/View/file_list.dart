@@ -26,6 +26,8 @@ class _FileListPageState extends State<FileListPage>{
     super.initState();
   }
 
+
+
   @override
   Widget build(BuildContext context) {
 
@@ -55,12 +57,12 @@ class _FileListPageState extends State<FileListPage>{
               case FileAction.download:
                 Navigator.push(context, MaterialPageRoute(
                     builder: (context) => FileDownloaderPage(fileBasicInformation: file),
-                ));
+                )).then((value) => setState(() {}));
                 break;
               case FileAction.share:
                 Navigator.push(context, MaterialPageRoute(
                     builder: (context) => FileCollaboratorManagePage(fileBasicInformation: file)
-                ));
+                )).then((value) => setState(() {}));
                 break;
             }
             setState(() {
@@ -164,7 +166,8 @@ class _FileListPageState extends State<FileListPage>{
         Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) => FileUploaderPage()));
+                builder: (context) => FileUploaderPage()))
+            .then((value) => setState(() {}));
       },
       child: Icon(Icons.file_upload),
       backgroundColor: AppColor.thirdColor,

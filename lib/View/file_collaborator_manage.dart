@@ -24,7 +24,6 @@ class _FileCollaboratorManagePage extends State<FileCollaboratorManagePage> {
   final GlobalKey<AnimatedListState> _listKey = GlobalKey();
   final CollaboratorService _collaboratorService = CollaboratorService();
   final friendController = TextEditingController();
-  final _formKey = GlobalKey<FormState>();
   final formKey = new GlobalKey<FormState>();
   List<String> uidSelected = new List();
 
@@ -57,7 +56,7 @@ class _FileCollaboratorManagePage extends State<FileCollaboratorManagePage> {
             child: MultiSelectFormField(
               autovalidate: false,
               titleText: 'Add Collaborator',
-              validator: (value) {return null;},
+              validator: (value) => value.length > 0 ? null : "Please select some friends to add",
               dataSource: users.map((e) => e.toObject()).toList(),
               textField: 'username',
               valueField: 'uuid',
@@ -154,14 +153,8 @@ class _FileCollaboratorManagePage extends State<FileCollaboratorManagePage> {
                         )
                     );
                   } else {
-                    return ListView.builder(
-                      key: _formKey,
-                      scrollDirection: Axis.vertical,
-                      shrinkWrap: true,
-                      itemCount: snapshot.data.length,
-                      itemBuilder: (context, index) {
-                        return collaboratorForm(snapshot.data);
-                      },
+                    return Container(
+                      child: collaboratorForm(snapshot.data),
                     );
                   }
                 }
@@ -170,6 +163,11 @@ class _FileCollaboratorManagePage extends State<FileCollaboratorManagePage> {
             Expanded(
               child: RefreshIndicator(
                 color: AppColor.thirdColor,
+                onRefresh: () async {
+                  setState(() {
+                    _collaborators = _collaboratorService.getCollaborators(_fileBasicInformation);
+                  });
+                },
                 child: FutureBuilder(
                     future: _collaborators,
                     builder: (BuildContext context, AsyncSnapshot snapshot) {
@@ -180,6 +178,13 @@ class _FileCollaboratorManagePage extends State<FileCollaboratorManagePage> {
                             )
                         );
                       } else {
+                        if (snapshot.data.length == 0) {
+                          return Container(
+                              child: Center(
+                                child: Text("No collaborator", style: TextStyle(color: AppColor.lightedMainColor2),),
+                              )
+                          );
+                        }
                         return ListView.builder(
                           key: _listKey,
                           scrollDirection: Axis.vertical,
@@ -192,11 +197,6 @@ class _FileCollaboratorManagePage extends State<FileCollaboratorManagePage> {
                       }
                     }
                 ),
-                onRefresh: () async {
-                  setState(() {
-                    _collaborators = _collaboratorService.getCollaborators(_fileBasicInformation);
-                  });
-                },
               ),
             )
           ],

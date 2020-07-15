@@ -20,7 +20,6 @@ class CollaboratorRepository extends BaseRepository {
     var res = await http.get("$getCollaboratorsUrl/$fileUuid", headers: headers);
     if (res.statusCode == 200) {
       var jsonData = json.decode(res.body);
-      print(jsonData);
       List<FileCollaborator> fileCollaborators = new List();
       for (var u in jsonData) {
         FileCollaborator fileCollaborator = FileCollaborator.fromJson(u);
@@ -39,7 +38,6 @@ class CollaboratorRepository extends BaseRepository {
     };
     var res = await http.post("$addCollaboratorsUrl/$fileUuid",
         body: body, headers: headers);
-    print(res.statusCode);
     if (res.statusCode == 200) return true;
     return false;
   }
@@ -48,9 +46,7 @@ class CollaboratorRepository extends BaseRepository {
     Map<String, String> headers = {
       "Authorization": _authService.currentToken,
     };
-    print("$removeCollaboratorsUrl/$fileUuid?collaboratorUuid=$collaboratorUuid");
     var res = await http.delete("$removeCollaboratorsUrl/$fileUuid?collaboratorUuid=$collaboratorUuid", headers: headers);
-    print(res.statusCode);
     if (res.statusCode == 204) return true;
     return false;
   }
