@@ -179,13 +179,15 @@ class _FileListPageState extends State<FileListPage>{
                 );
               } else {
                 FileAccount fileAccount = snapshot.data;
+                List<FileBasicInformation> files = fileAccount.userFilesAuthor;
+                files.addAll(fileAccount.userFilesCollaborator);
                 return GridView.count(
                     crossAxisCount: 2,
                     childAspectRatio: (150 / 130),
-                    children: List.generate(fileAccount.userFilesAuthor.length, (index) {
+                    children: List.generate(files.length, (index) {
                       return Container(
                         height: 100,
-                        child: makeCard(fileAccount.userFilesAuthor[index]),
+                        child: makeCard(files[index]),
                       );
                     })
                 );
