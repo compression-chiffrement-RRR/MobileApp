@@ -36,11 +36,11 @@ class _FileListPageState extends State<FileListPage>{
           elevation: 5,
           color: Color.fromRGBO(255, 255, 255, 0.95),
           itemBuilder: (BuildContext context) => <PopupMenuEntry<FileAction>>[
-            const PopupMenuItem<FileAction>(
+            file.isError || !file.isTreated ? null : const PopupMenuItem<FileAction>(
               value: FileAction.download,
               child: Text('Download'),
             ),
-            const PopupMenuItem<FileAction>(
+            file.isError || !file.isTreated ? null : const PopupMenuItem<FileAction>(
               value: FileAction.share,
               child: Text('Share'),
             ),
@@ -176,7 +176,10 @@ class _FileListPageState extends State<FileListPage>{
     return Scaffold(
       backgroundColor: AppColor.mainColor,
       body: makeBody,
-      floatingActionButton: floatButton,
+      floatingActionButton: Padding(
+        padding: const EdgeInsets.only(bottom: 15.0),
+        child: floatButton,
+      ),
     );
 
   }
