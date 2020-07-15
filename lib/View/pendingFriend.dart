@@ -100,6 +100,13 @@ class _PendingFriendPageState extends State<PendingFriendPage>{
                               )
                           );
                         } else {
+                          if (snapshot.data.length == 0) {
+                            return Container(
+                                child: Center(
+                                  child: Text("No invitation", style: TextStyle(color: AppColor.lightedMainColor2),),
+                                )
+                            );
+                          }
                           return ListView.builder(
                             key: _listKey,
                             scrollDirection: Axis.vertical,

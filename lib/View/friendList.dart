@@ -154,6 +154,13 @@ class _FriendListPageState extends State<FriendListPage>{
                           )
                       );
                     } else {
+                      if (snapshot.data.length == 0) {
+                        return Container(
+                            child: Center(
+                              child: Text("No friends", style: TextStyle(color: AppColor.lightedMainColor2),),
+                            )
+                        );
+                      }
                       return ListView.builder(
                         scrollDirection: Axis.vertical,
                         shrinkWrap: true,
