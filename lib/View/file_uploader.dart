@@ -99,10 +99,10 @@ class _FileUploaderPageState extends State<FileUploaderPage> {
               _formRowProcessInputs.add(makeNewProcessFormRow(UniqueKey(), makeCipherFormFields(
                   label: value,
                   onSaved: (val) => processFile.password = val
-              )));
+              ), processFile));
             } else {
               processFile = ProcessFile.fromCompress(type: CompressTaskType.values.firstWhere((element) => element.toString() == "CompressTaskType.$value"));
-              _formRowProcessInputs.add(makeNewProcessFormRow(UniqueKey(), makeCompressFields(label: value)));
+              _formRowProcessInputs.add(makeNewProcessFormRow(UniqueKey(), makeCompressFields(label: value), processFile));
             }
             _taskProcessFile.types.add(processFile);
           });
@@ -116,7 +116,7 @@ class _FileUploaderPageState extends State<FileUploaderPage> {
     ),
   );
 
-  Row makeNewProcessFormRow(Key rowKey, Container formFields) =>
+  Row makeNewProcessFormRow(Key rowKey, Container formFields, ProcessFile processFile) =>
     Row(
       key: rowKey,
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -133,6 +133,7 @@ class _FileUploaderPageState extends State<FileUploaderPage> {
               onPressed: () {
                 setState(() {
                   _formRowProcessInputs.removeWhere((Row element) => element.key == rowKey);
+                  _taskProcessFile.types.remove(processFile);
                 });
               },
               icon: Icon(Icons.delete_forever, size: 20, color: Colors.red,),
@@ -154,7 +155,7 @@ class _FileUploaderPageState extends State<FileUploaderPage> {
   );
 
   Container makeCompressFields({label}) => Container(
-    child: Text(label),
+    child: Text(label, style: TextStyle(color: AppColor.lightedMainColor2),),
   );
 
   Widget makeInput({controller, keyboardType, validator, onSaved, label, obscureText = false, defaultValue}) =>
