@@ -15,7 +15,7 @@ class WorkerRepository extends BaseRepository {
   final String uploadFileUrl = "${BaseRepository.apiEndpoint}/api/worker/uploadFile";
   final String unprocessFileUrl = "${BaseRepository.apiEndpoint}/api/worker/retrieveFile";
 
-  Future<FileBasicInformation> uploadFile({TaskProcessFile task, String path, String filename}) async {
+  Future<FileBasicInformation> uploadFile({TaskProcessFile task, String path, String filename, void Function(int, int) onSendProgress}) async {
     String taskJson = json.encode(task);
 
     Dio dio = new Dio();
@@ -32,8 +32,8 @@ class WorkerRepository extends BaseRepository {
     try {
       var res = await dio.post(uploadFileUrl, data: formData, options: Options(
           headers: headers,
-          contentType: "multipart/form-data"
-      ));
+          contentType: "multipart/form-data",
+      ), onSendProgress: onSendProgress);
       if (res.statusCode == 202) {
         FileBasicInformation fileBasicInformation = FileBasicInformation.fromJson(res.data);
         return fileBasicInformation;

@@ -1,6 +1,7 @@
 import 'package:enum_to_string/enum_to_string.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/painting.dart';
 import 'package:flutter_material_pickers/flutter_material_pickers.dart';
 import 'package:mobileappflutter/Helper/dialog_helper.dart';
 import 'package:mobileappflutter/Modele/Enum/cipher_task_type.dart';
@@ -11,6 +12,7 @@ import 'package:mobileappflutter/Modele/task_process_file.dart';
 import 'package:mobileappflutter/Service/worker_service.dart';
 import 'package:mobileappflutter/Style/color.dart';
 import 'package:flutter/services.dart';
+import 'package:percent_indicator/linear_percent_indicator.dart';
 
 class FileUploaderPage extends StatefulWidget {
   @override
@@ -33,6 +35,8 @@ class _FileUploaderPageState extends State<FileUploaderPage> {
   bool _loadingPath = false;
   bool _multiPick = false;
   bool _hasValidMime = false;
+  bool _isUploading = false;
+  String _progress = '0';
   FileType _pickingType = FileType.any;
 
   List<Row> _formRowProcessInputs = new List();
@@ -210,7 +214,8 @@ class _FileUploaderPageState extends State<FileUploaderPage> {
                   : _path != null || _paths != null
                       ? new Container(
                           padding: const EdgeInsets.all(10.0),
-                          height: 160,
+                          height: 180,
+                          alignment: Alignment.center,
                           child: new ListView.separated(
                             itemCount: _paths != null && _paths.isNotEmpty
                                 ? _paths.length
@@ -281,14 +286,27 @@ class _FileUploaderPageState extends State<FileUploaderPage> {
                   ),
                 );
                 _scaffoldKey.currentState.showSnackBar(snackbar);
-                FileBasicInformation fileBasicInformation = await _workerService.uploadFile(path: _path, filename: _filenameController.text, task: _taskProcessFile);
+                setState(() {
+                  _isUploading = true;
+                });
+                FileBasicInformation fileBasicInformation = await _workerService.uploadFile(path: _path, filename: _filenameController.text, task: _taskProcessFile, onSendProgress: (rcv, total) {
+                  print(
+                      'received: ${rcv.toStringAsFixed(0)} out of total: ${total.toStringAsFixed(0)}');
+
+                  setState(() {
+                    _progress = ((rcv / total) * 100).toStringAsFixed(0);
+                  });
+                });
                 if (fileBasicInformation == null) {
                   _scaffoldKey.currentState.hideCurrentSnackBar();
+                  setState(() {
+                    _isUploading = false;
+                  });
                   DialogHelper.displayDialog(context, "Error during upload", "Upload file fail, please retry");
                 } else {
                   _scaffoldKey.currentState.hideCurrentSnackBar();
                   final snackbar = SnackBar(
-                    duration: Duration(seconds: 3),
+                    duration: Duration(seconds: 2),
                     content: Row(
                       children: <Widget>[
                         Icon(Icons.save_alt, size: 20),
@@ -306,9 +324,58 @@ class _FileUploaderPageState extends State<FileUploaderPage> {
           )
       );
 
+  Container makeContainerShowStatusFileDownload() =>
+      Container(
+        child: Column(
+          children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.only(left: 25.0, top: 30),
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  'Upload Information',
+                  style: TextStyle(
+                      color: AppColor.lightedMainColor2,
+                      fontSize: 18.0,
+                      fontWeight: FontWeight.bold),
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(25.0),
+              child: Column(
+                children: <Widget>[
+                  Align(
+                    child: Text(
+                      'Status upload',
+                      style: TextStyle(
+                          color: AppColor.lightedMainColor2,
+                          fontSize: 12.0,
+                          fontWeight: FontWeight.bold),
+                    ),
+                    alignment: Alignment.centerLeft,
+                  ),
+                  LinearPercentIndicator(
+                    animation: true,
+                    lineHeight: 20.0,
+                    animationDuration: 500,
+                    percent: double.parse(_progress) / 100,
+                    center: Text(_progress),
+                    linearStrokeCap: LinearStrokeCap.roundAll,
+                    progressColor: Colors.green,
+                    animateFromLastPercent: true,
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      );
+
   void resetState() {
     _path = null;
     _fileName = null;
+    _isUploading = false;
     _taskProcessFile = TaskProcessFile(new List());
   }
 
@@ -334,14 +401,16 @@ class _FileUploaderPageState extends State<FileUploaderPage> {
         ),
         body: Padding(
           padding: const EdgeInsets.only(left: 20.0, right: 20.0, bottom: 10.0, top: 10.0),
-          child: ListView(
-            scrollDirection: Axis.vertical,
-            children: <Widget>[
-              makeForm(),
-              makeAddFormFieldButton(),
-              makeFilePickerButton(),
-              makeButtonUpload(),
-            ],
+          child: SingleChildScrollView(
+            child: Column(
+              children: <Widget>[
+                makeForm(),
+                makeAddFormFieldButton(),
+                makeFilePickerButton(),
+                !_isUploading ? makeButtonUpload(): Container(),
+                _isUploading ? makeContainerShowStatusFileDownload() : Container()
+              ],
+            ),
           ),
         ));
   }

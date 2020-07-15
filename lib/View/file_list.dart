@@ -93,6 +93,45 @@ class _FileListPageState extends State<FileListPage>{
 
     Container makeCardContent(FileBasicInformation file) =>
         Container(
+          //TODO : end design
+          /*color: AppColor.lightedMainColor2,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Center(
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 10, right: 5),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      Icon(Icons.insert_drive_file, color: Colors.blue,),
+                      makePopupButton(file)
+                    ],
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 10.0),
+                child: Column(
+                  children: <Widget>[
+                    Text(
+                      file.name,
+                      style: TextStyle(color: Colors.white, fontSize: 20),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    Text(
+                      file.name,
+                      style: TextStyle(color: Colors.white, fontSize: 12),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    )
+                  ],
+                ),
+              ),
+            ],
+          ),*/
           child: Column(
             children: <Widget>[
               SizedBox(height: 10,),

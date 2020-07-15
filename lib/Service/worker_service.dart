@@ -12,8 +12,8 @@ class WorkerService extends WorkerServiceBase {
   final WorkerRepository _workerRepository = WorkerRepository();
 
   @override
-  Future<FileBasicInformation> uploadFile({TaskProcessFile task, String path, String filename}) {
-    return _workerRepository.uploadFile(task: task, path: path, filename: filename);
+  Future<FileBasicInformation> uploadFile({TaskProcessFile task, String path, String filename, void Function(int, int) onSendProgress}) {
+    return _workerRepository.uploadFile(task: task, path: path, filename: filename, onSendProgress: onSendProgress);
   }
 
   @override
