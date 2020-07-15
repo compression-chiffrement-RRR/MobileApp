@@ -31,6 +31,8 @@ class _FileListPageState extends State<FileListPage>{
 
     PopupMenuButton makePopupButton(FileBasicInformation file) =>
         PopupMenuButton<FileAction>(
+          elevation: 5,
+          color: Color.fromRGBO(255, 255, 255, 0.95),
           itemBuilder: (BuildContext context) => <PopupMenuEntry<FileAction>>[
             const PopupMenuItem<FileAction>(
               value: FileAction.download,
@@ -57,7 +59,7 @@ class _FileListPageState extends State<FileListPage>{
                 break;
               case FileAction.share:
                 Navigator.push(context, MaterialPageRoute(
-                    builder: (context) => FileCollaboratorManagePage(basicInformation: file)
+                    builder: (context) => FileCollaboratorManagePage(fileBasicInformation: file)
                 ));
                 break;
             }
@@ -165,7 +167,7 @@ class _FileListPageState extends State<FileListPage>{
                 builder: (context) => FileUploaderPage()));
       },
       child: Icon(Icons.file_upload),
-      backgroundColor: AppColor.mainColor,
+      backgroundColor: AppColor.thirdColor,
     );
 
     return Scaffold(

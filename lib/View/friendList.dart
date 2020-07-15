@@ -59,7 +59,7 @@ class _FriendListPageState extends State<FriendListPage>{
         new Card(
           margin: new EdgeInsets.symmetric(horizontal: 0, vertical: 6.0),
           child: new IconSlideAction(
-            caption: 'refuse',
+            caption: 'delete',
             color: Colors.red,
             icon: Icons.delete,
             onTap: () async {

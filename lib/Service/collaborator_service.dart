@@ -15,20 +15,20 @@ class CollaboratorService extends CollaboratorServiceBase {
   final CollaboratorRepository _collaboratorRepository = CollaboratorRepository();
 
   @override
-  Future<List<FileCollaborator>> getCollaborators(FileBasicInformation fileBasicInformation) {
-    return _collaboratorRepository.getCollaborators(fileBasicInformation.uuid);
+  Future<List<FileCollaborator>> getCollaborators(FileBasicInformation fileBasicInformation) async {
+    return await _collaboratorRepository.getCollaborators(fileBasicInformation.uuid);
   }
 
   @override
-  Future<bool> addCollaborators({FileBasicInformation fileBasicInformation, List<User> collaborators}) {
-    return _collaboratorRepository.addCollaborators(
+  Future<bool> addCollaborators({FileBasicInformation fileBasicInformation, List<User> collaborators}) async {
+    return await _collaboratorRepository.addCollaborators(
         fileBasicInformation.uuid,
         collaborators.map((e) => e.uuid).toList());
   }
 
   @override
-  Future<bool> removeCollaborator({FileBasicInformation fileBasicInformation, User collaborator}) {
-    return _collaboratorRepository.removeCollaborator(
+  Future<bool> removeCollaborator({FileBasicInformation fileBasicInformation, User collaborator}) async {
+    return await _collaboratorRepository.removeCollaborator(
         fileBasicInformation.uuid,
         collaborator.uuid);
   }

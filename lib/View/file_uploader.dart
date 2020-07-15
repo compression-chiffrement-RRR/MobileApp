@@ -164,7 +164,7 @@ class _FileUploaderPageState extends State<FileUploaderPage> {
           Text(label, style: TextStyle(
               fontSize: 15,
               fontWeight: FontWeight.w400,
-              color: Colors.black87
+              color: AppColor.lightedMainColor2
           ),),
           SizedBox(height: 5,),
           TextFormField(
@@ -228,7 +228,8 @@ class _FileUploaderPageState extends State<FileUploaderPage> {
                               return Column(
                                 children: <Widget>[
                                   new Card(
-                                      margin: EdgeInsets.all(4),
+                                      margin: EdgeInsets.only(bottom: 10),
+                                      elevation: 1,
                                       child: Column(children: <Widget>[
                                         ListTile(
                                           title: new Text(name),
@@ -260,7 +261,7 @@ class _FileUploaderPageState extends State<FileUploaderPage> {
           padding: EdgeInsets.fromLTRB(10, 20, 10, 0),
           child: RaisedButton(
             textColor: Colors.white,
-            color: Colors.green,
+            color: AppColor.lightedMainColor,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(20),
             ),
@@ -299,11 +300,12 @@ class _FileUploaderPageState extends State<FileUploaderPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        backgroundColor: AppColor.mainColor,
         key: _scaffoldKey,
         appBar: AppBar(
-          elevation: 1,
+          elevation: 10,
           brightness: Brightness.dark,
-          backgroundColor: Colors.white,
+          backgroundColor: AppColor.mainColor,
           leading: IconButton(
             onPressed: () {
               Navigator.pop(context);

@@ -11,7 +11,7 @@ class FileCollaborator {
   factory FileCollaborator.fromJson(Map<String, dynamic> json) {
     return FileCollaborator(
       fileUuid: json["userFileUuid"],
-      user: json["account"],
+      user: User.fromJson(json["account"]),
       pending: json["pending"],
       creationDate: json["creationDate"]
     );

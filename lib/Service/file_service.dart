@@ -21,7 +21,6 @@ class FileService extends FileServiceBase {
 
   @override
   Future<FileAccount> getAllFiles() async {
-    print("getall");
     FileAccount fileAccount = await _fileRepository.getAllFiles();
     return fileAccount;
   }
@@ -29,7 +28,6 @@ class FileService extends FileServiceBase {
   @override
   Future<String> downloadFile(FileBasicInformation file, void Function(int, int) onReceiveProgress) async {
     if (!file.isTreated) {
-      print("Not treated");
       return null;
     }
     String dir = (await getExternalStorageDirectory()).path;

@@ -57,7 +57,7 @@ class _FileDownloaderPage extends State<FileDownloaderPage> {
       backgroundColor: AppColor.mainColor,
       key: _scaffoldKey,
       appBar: AppBar(
-        elevation: 20,
+        elevation: 10,
         brightness: Brightness.dark,
         backgroundColor: AppColor.mainColor,
         leading: IconButton(
@@ -168,7 +168,6 @@ class _FileDownloaderPage extends State<FileDownloaderPage> {
             _formPasswordInputs = new List();
             List<String> cipherNames = EnumToString.toList(CipherTaskType.values);
             _fileAdvancedInformation.processes.forEach((process) {
-              print(process.processType);
               if (cipherNames.contains(process.processType)) {
                 _formPasswordInputs.add(makeInput(
                     label: "${process.processType} n°${process.order} password",
@@ -289,7 +288,6 @@ class _FileDownloaderPage extends State<FileDownloaderPage> {
   void checkIfFileIsTreated(FileBasicInformation fileBasicInformation) async {
     _timer = Timer.periodic(Duration(seconds: 5), (timer) async {
       _fileUnprocessed = await _fileService.getInformation(fileBasicInformation.uuid);
-      print("Checking file being processed to be downloaded");
       if (_fileUnprocessed.isError) {
         DialogHelper.displayDialog(context, "Download", "Cannot unprocess file yet, an error as occured, please retry later");
         setStateReset();

@@ -8,5 +8,4 @@ class AppColor {
   static Color thirdColor = Color.fromRGBO(0, 167, 255, 1.0);
   static Color lightedMainColor = Color.fromRGBO(126, 134, 156, 1.0);
   static Color lightedMainColor2 = Color.fromRGBO(209, 213, 224, 1.0);
-
 }

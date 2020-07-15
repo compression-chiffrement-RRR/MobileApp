@@ -18,8 +18,6 @@ class WorkerRepository extends BaseRepository {
   Future<FileBasicInformation> uploadFile({TaskProcessFile task, String path, String filename}) async {
     String taskJson = json.encode(task);
 
-    print(taskJson);
-
     Dio dio = new Dio();
 
     FormData formData = FormData.fromMap({
@@ -55,7 +53,6 @@ class WorkerRepository extends BaseRepository {
 
   Future<FileBasicInformation> unprocessFile(String fileUuid, TaskUnprocessFile taskUnprocessFile) async {
     final body = jsonEncode(taskUnprocessFile);
-    print(body);
     Map<String, String> headers = {
       'Content-Type': ContentType.json.toString(),
       "Authorization": _authService.currentToken

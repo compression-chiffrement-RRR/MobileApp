@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:mobileappflutter/Helper/dialog_helper.dart';
 import 'package:mobileappflutter/Modele/file_basic_information.dart';
+import 'package:mobileappflutter/Modele/file_collaborator.dart';
 import 'package:mobileappflutter/Modele/user.dart';
 import 'package:mobileappflutter/Service/collaborator_service.dart';
 import 'package:mobileappflutter/Service/friend_service.dart';
@@ -10,12 +11,12 @@ import 'package:multiselect_formfield/multiselect_formfield.dart';
 
 
 class FileCollaboratorManagePage extends StatefulWidget {
-  final FileBasicInformation basicInformation;
+  final FileBasicInformation fileBasicInformation;
 
-  FileCollaboratorManagePage({this.basicInformation});
+  FileCollaboratorManagePage({this.fileBasicInformation});
 
   @override
-  State<StatefulWidget> createState() => _FileCollaboratorManagePage(basicInformation);
+  State<StatefulWidget> createState() => _FileCollaboratorManagePage(fileBasicInformation);
 }
 
 class _FileCollaboratorManagePage extends State<FileCollaboratorManagePage> {
@@ -27,8 +28,9 @@ class _FileCollaboratorManagePage extends State<FileCollaboratorManagePage> {
   final formKey = new GlobalKey<FormState>();
   List<String> uidSelected = new List();
 
-  _FileCollaboratorManagePage(this._basicInformation);
-  final FileBasicInformation _basicInformation;
+  _FileCollaboratorManagePage(this._fileBasicInformation);
+  final FileBasicInformation _fileBasicInformation;
+  Future<List<FileCollaborator>> _collaborators;
 
   @override
   void dispose() {
@@ -37,8 +39,9 @@ class _FileCollaboratorManagePage extends State<FileCollaboratorManagePage> {
   }
 
   @override
-  void initState() {
+  Future<void> initState() {
     super.initState();
+    _collaborators = _collaboratorService.getCollaborators(_fileBasicInformation);
   }
 
   @override
@@ -73,9 +76,10 @@ class _FileCollaboratorManagePage extends State<FileCollaboratorManagePage> {
               onPressed: () async {
                 if(formKey.currentState.validate()){
                   List<User> userSelected = users.where((element) => uidSelected.contains(element.uuid)).toList();
-                  bool res = await _collaboratorService.addCollaborators(fileBasicInformation: _basicInformation, collaborators: userSelected);
+                  bool res = await _collaboratorService.addCollaborators(fileBasicInformation: _fileBasicInformation, collaborators: userSelected);
                   if(res){
                     setState(() {
+                      _collaborators = _collaboratorService.getCollaborators(_fileBasicInformation);
                     });
                   }
                   else{
@@ -89,7 +93,7 @@ class _FileCollaboratorManagePage extends State<FileCollaboratorManagePage> {
       ),
     );
 
-    Slidable slide(User user, int index) => Slidable(
+    Slidable slide(FileCollaborator fileCollaborator, int index) => Slidable(
       delegate: new SlidableDrawerDelegate(),
       actionExtentRatio: 0.25,
       child: new Card(
@@ -107,7 +111,7 @@ class _FileCollaboratorManagePage extends State<FileCollaboratorManagePage> {
               child: Icon(Icons.person, color: Colors.white),
             ),
             title: new Text(
-              user.username,
+              fileCollaborator.user.username,
               style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
             ),
           ),
@@ -121,9 +125,10 @@ class _FileCollaboratorManagePage extends State<FileCollaboratorManagePage> {
             color: Colors.red,
             icon: Icons.delete,
             onTap: () async {
-              bool res = await _collaboratorService.removeCollaborator(fileBasicInformation: _basicInformation, collaborator: user);
+              bool res = await _collaboratorService.removeCollaborator(fileBasicInformation: _fileBasicInformation, collaborator: fileCollaborator.user);
               if(res){
                 setState(() {
+                  _collaborators = _collaboratorService.getCollaborators(_fileBasicInformation);
                 });
               }
               else{
@@ -166,7 +171,7 @@ class _FileCollaboratorManagePage extends State<FileCollaboratorManagePage> {
               child: RefreshIndicator(
                 color: AppColor.thirdColor,
                 child: FutureBuilder(
-                    future: _friendService.getCurrentFriendsOrRefresh(),
+                    future: _collaborators,
                     builder: (BuildContext context, AsyncSnapshot snapshot) {
                       if (snapshot.data == null) {
                         return Container(
@@ -188,9 +193,8 @@ class _FileCollaboratorManagePage extends State<FileCollaboratorManagePage> {
                     }
                 ),
                 onRefresh: () async {
-                  //TODO: Fix problem when remove pending friends by reloading
-                  await _collaboratorService.getCollaborators(_basicInformation);
                   setState(() {
+                    _collaborators = _collaboratorService.getCollaborators(_fileBasicInformation);
                   });
                 },
               ),
