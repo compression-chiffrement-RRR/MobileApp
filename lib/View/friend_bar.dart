@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:mobileappflutter/View/friendList.dart';
+import 'package:mobileappflutter/View/friend_list.dart';
 import 'package:mobileappflutter/Style/color.dart';
-import 'pendingFriend.dart';
+import 'pending_friend.dart';
 
 class FriendBar extends StatefulWidget {
 

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:mobileappflutter/View/file_list.dart';
 import 'package:mobileappflutter/Style/color.dart';
 import 'account.dart';
-import 'friendBar.dart';
+import 'friend_bar.dart';
 
 class Navbar extends StatefulWidget {
   @override

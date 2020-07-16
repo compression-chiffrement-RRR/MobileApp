@@ -121,7 +121,7 @@ class _FriendListPageState extends State<FriendListPage>{
                             return;
                           }
                           if (await _friendService.addFriend(friend.uuid)) {
-                            return DialogHelper.displayDialog(context, 'Friend Added', "Invitation to ${friendController.text} as sent successfully");
+                            return DialogHelper.displayDialog(context, 'Friend Added', "Invitation to ${friendController.text} has been sent successfully");
                           }
                           else {
                             return DialogHelper.displayDialog(context, 'Friend Not Added', "Error append when adding ${friendController.text}, please retry later");

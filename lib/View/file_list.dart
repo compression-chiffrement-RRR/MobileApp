@@ -7,7 +7,7 @@ import 'package:mobileappflutter/Style/color.dart';
 import 'package:mobileappflutter/View/file_collaborator_manage.dart';
 import 'package:mobileappflutter/View/file_downloader.dart';
 import 'package:shimmer/shimmer.dart';
-import 'fileDetail.dart';
+import 'file_detail.dart';
 import 'file_uploader.dart';
 
 enum FileAction { download, share, delete }
@@ -87,7 +87,8 @@ class _FileListPageState extends State<FileListPage>{
             Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => DetailPage()));
+                    builder: (context) => DetailPage(fileBasicInformation: file)))
+                .then((value) => setState(() {}));
           },
         );
 
