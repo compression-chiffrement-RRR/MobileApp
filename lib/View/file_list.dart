@@ -71,7 +71,7 @@ class _FileListPageState extends State<FileListPage>{
           },
         );
 
-    Column makeCardContent(FileBasicInformation file) =>
+    Column makeCardContent(FileBasicInformation file, bool isFileShared) =>
         Column(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -84,7 +84,7 @@ class _FileListPageState extends State<FileListPage>{
                   children: <Widget>[
                     CircleAvatar(
                       backgroundColor: AppColor.thirdColorVeryLight,
-                      child: Icon(Icons.insert_drive_file, color: AppColor.thirdColor, size: 30,),
+                      child: Icon(isFileShared ? Icons.share : Icons.insert_drive_file, color: AppColor.thirdColor, size: 30,),
                     ),
                     makePopupButton(file)
                   ],
@@ -115,7 +115,7 @@ class _FileListPageState extends State<FileListPage>{
           ],
         );
 
-    Widget makeCardBase(FileBasicInformation file) =>
+    Widget makeCardBase(FileBasicInformation file, bool isFileShared) =>
         GestureDetector(
           onTap: () {
             Navigator.push(
@@ -126,30 +126,30 @@ class _FileListPageState extends State<FileListPage>{
           },
           child: Container(
             decoration: BoxDecoration(
-                color: AppColor.lightedMainColor2,
+                color: AppColor.lightedMainColor3,
                 borderRadius: BorderRadius.all(Radius.circular(20))
             ),
             child: file.isError ? Shimmer.fromColors(
                   baseColor: Colors.red[800],
                   highlightColor: Colors.red[500],
                   enabled: true,
-                  child: makeCardContent(file)
+                  child: makeCardContent(file, isFileShared)
               ) : !file.isTreated ? Shimmer.fromColors(
                   baseColor: Colors.grey[500],
                   highlightColor: Colors.grey[200],
                   enabled: true,
-                  child: makeCardContent(file)
-              ) : makeCardContent(file),
+                  child: makeCardContent(file, isFileShared)
+              ) : makeCardContent(file, isFileShared),
           ),
         );
 
-    Container makeCard(FileBasicInformation file) =>
+    Container makeCard(FileBasicInformation file, bool isFileShared) =>
         Container(
           child: Card(
             elevation: 0.0,
             margin: new EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
             color: AppColor.mainColor,
-            child: makeCardBase(file)
+            child: makeCardBase(file, isFileShared)
           ),
         );
 
@@ -176,7 +176,7 @@ class _FileListPageState extends State<FileListPage>{
                     children: List.generate(files.length, (index) {
                       return Container(
                         height: 100,
-                        child: makeCard(files[index]),
+                        child: makeCard(files[index], fileAccount.userFilesCollaborator.contains(files[index])),
                       );
                     })
                 );

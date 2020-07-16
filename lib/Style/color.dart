@@ -9,5 +9,6 @@ class AppColor {
   static Color thirdColorVeryLight = Color.fromRGBO(255, 206, 71, 0.1);
   static Color lightedMainColor = Color.fromRGBO(117, 123, 143, 1.0);
   static Color lightedMainColor2 = Color.fromRGBO(209, 213, 224, 1.0);
+  static Color lightedMainColor3 = Color.fromRGBO(221, 220, 221, 1.0);
   static Color redDeleteButton = Color.fromRGBO(224, 52, 39, 1.0);
 }
