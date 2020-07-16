@@ -93,6 +93,9 @@ class _FileUploaderPageState extends State<FileUploaderPage> {
       showMaterialRadioPicker(
         context: context,
         title: "Pick Your Process Type",
+        headerColor: AppColor.thirdColor,
+        headerTextColor: AppColor.mainColor,
+        buttonTextColor: AppColor.mainColor,
         items: _taskTypes,
         selectedItem: _taskTypes[0],
         onChanged: (value) {

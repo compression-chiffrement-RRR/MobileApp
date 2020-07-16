@@ -82,7 +82,7 @@ class _FileListPageState extends State<FileListPage>{
           },
           child: Container(
             decoration: BoxDecoration(
-                color: AppColor.lightedMainColor,
+                color: AppColor.lightedMainColor2,
                 borderRadius: BorderRadius.all(Radius.circular(20))
             ),
             child: Column(
