@@ -10,14 +10,6 @@ class Navbar extends StatefulWidget {
 }
 
 class _NavbarState extends State<Navbar>{
-  static final _NavbarState _instance = _NavbarState._internal();
-
-  factory _NavbarState() {
-    return _instance;
-  }
-
-  _NavbarState._internal();
-
   int _currentIndex = 0;
   final statefulWidgetBuilder = [
     FileListPage(),
@@ -29,6 +21,11 @@ class _NavbarState extends State<Navbar>{
     elevation: 0.1,
     backgroundColor: AppColor.mainColor,
   );
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {

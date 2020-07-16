@@ -27,8 +27,6 @@ class _FileListPageState extends State<FileListPage>{
     super.initState();
   }
 
-
-
   @override
   Widget build(BuildContext context) {
 
@@ -41,7 +39,7 @@ class _FileListPageState extends State<FileListPage>{
               value: FileAction.download,
               child: Text('Download'),
             ),
-            file.isError || !file.isTreated ? null : const PopupMenuItem<FileAction>(
+            file.isError || !file.isTreated || isFileShared ? null : const PopupMenuItem<FileAction>(
               value: FileAction.share,
               child: Text('Share'),
             ),

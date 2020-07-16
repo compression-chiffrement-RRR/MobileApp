@@ -107,7 +107,7 @@ class _FileCollaboratorManagePage extends State<FileCollaboratorManagePage> {
               decoration: new BoxDecoration(
                   border: new Border(
                       right: new BorderSide(width: 1.0, color: Colors.white24))),
-              child: Icon(Icons.person, color: Colors.white),
+              child: Icon(fileCollaborator.pending ? Icons.access_time : Icons.person, color: Colors.white),
             ),
             title: new Text(
               fileCollaborator.user.username,
