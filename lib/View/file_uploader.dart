@@ -75,18 +75,21 @@ class _FileUploaderPageState extends State<FileUploaderPage> {
     }
   }
 
-  RaisedButton makeAddFormFieldButton() =>
-      RaisedButton(
-        textColor: Colors.white,
-        color: AppColor.thirdColor,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
+  Widget makeAddFormFieldButton() =>
+      Padding(
+        padding: const EdgeInsets.only(top: 10.0, bottom: 10),
+        child: RaisedButton(
+          textColor: Colors.white,
+          color: AppColor.thirdColor,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          padding: EdgeInsets.symmetric(horizontal: 50, vertical: 13),
+          child: Text("Add a process to the file", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),),
+          onPressed: () async {
+            dialogSelectTypeProcess();
+          },
         ),
-        padding: EdgeInsets.symmetric(horizontal: 50, vertical: 13),
-        child: Text("Add a process to the file", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),),
-        onPressed: () async {
-          dialogSelectTypeProcess();
-        },
       );
 
   void dialogSelectTypeProcess() =>
@@ -200,6 +203,9 @@ class _FileUploaderPageState extends State<FileUploaderPage> {
 
   Container makeFilePickerButton() => Container(
         child: Card(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20.0),
+          ),
           margin: EdgeInsets.all(10),
           child: Column(children: <Widget>[
             new Padding(
@@ -267,7 +273,7 @@ class _FileUploaderPageState extends State<FileUploaderPage> {
 
   Container makeButtonUpload() =>
       Container(
-          padding: EdgeInsets.fromLTRB(10, 20, 10, 0),
+          padding: EdgeInsets.fromLTRB(10, 10, 10, 0),
           child: RaisedButton(
             textColor: Colors.white,
             color: AppColor.lightedMainColor,

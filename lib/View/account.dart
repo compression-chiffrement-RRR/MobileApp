@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:mobileappflutter/Helper/dialog_helper.dart';
 import 'package:mobileappflutter/Modele/user.dart';
+import 'package:mobileappflutter/Service/auth_service.dart';
 import 'package:mobileappflutter/Service/user_service.dart';
 import 'package:mobileappflutter/Style/color.dart';
+import 'package:mobileappflutter/View/login.dart';
 import 'package:shimmer/shimmer.dart';
 
 class AccountPage extends StatefulWidget {
@@ -12,6 +14,7 @@ class AccountPage extends StatefulWidget {
 
 class _AccountPageState extends State<AccountPage> {
   final UserService _userService = UserService();
+  final AuthService _authService = AuthService();
 
   final Color textColor = Colors.white;
   bool _statusInformation = true;
@@ -425,7 +428,38 @@ class _AccountPageState extends State<AccountPage> {
                                   : Container(),
                             ],
                           ),
-                        )
+                        ),
+                        Center(
+                          child: Padding(
+                            padding: const EdgeInsets.only(top: 100.0),
+                            child: RaisedButton(
+                              textColor: Colors.white,
+                              color: AppColor.lightedMainColor,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              padding: EdgeInsets.symmetric(horizontal: 60, vertical: 13),
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisSize: MainAxisSize.min,
+                                children: <Widget>[
+                                  Icon(Icons.perm_identity),
+                                  Text("Disconnect", style: TextStyle(
+                                      color: Colors.white, fontWeight: FontWeight.bold),),
+                                ],
+                              ),
+                              onPressed: () async {
+                                _authService.removeTokenStored();
+                                Navigator.pushReplacement(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => LoginPage()
+                                    )
+                                );
+                              },
+                            ),
+                          ),
+                        ),
                       ],
                     ),
                   ),

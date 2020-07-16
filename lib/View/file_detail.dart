@@ -76,7 +76,7 @@ class _DetailPageState extends State<DetailPage>{
                       mainAxisSize: MainAxisSize.max,
                       children: <Widget>[
                         Text(
-                          'FileName :',
+                          'File name :',
                           style: TextStyle(
                               color: AppColor.lightedMainColor2,
                               fontSize: 18.0,
@@ -110,7 +110,7 @@ class _DetailPageState extends State<DetailPage>{
                           mainAxisSize: MainAxisSize.min,
                           children: <Widget>[
                             Text(
-                              'Creation Date :',
+                              'Creation date :',
                               style: TextStyle(
                                   color: AppColor.lightedMainColor2,
                                   fontSize: 18.0,
@@ -130,7 +130,7 @@ class _DetailPageState extends State<DetailPage>{
                       ],
                     )
                 ),
-                Padding(
+                !file.isError ? Padding(
                     padding: EdgeInsets.only(
                         left: 25.0, right: 25.0, top: 10.0),
                     child: Row(
@@ -142,7 +142,7 @@ class _DetailPageState extends State<DetailPage>{
                           mainAxisSize: MainAxisSize.min,
                           children: <Widget>[
                             Text(
-                              'Treatment State :',
+                              'Treatment state :',
                               style: TextStyle(
                                   color: AppColor.lightedMainColor2,
                                   fontSize: 18.0,
@@ -164,8 +164,8 @@ class _DetailPageState extends State<DetailPage>{
                         ),
                       ],
                     )
-                ),
-                Padding(
+                ) : Container(),
+                file.isError ? Padding(
                     padding: EdgeInsets.only(
                         left: 25.0, right: 25.0, top: 10.0),
                     child: Row(
@@ -177,7 +177,7 @@ class _DetailPageState extends State<DetailPage>{
                           mainAxisSize: MainAxisSize.min,
                           children: <Widget>[
                             Text(
-                              'File in Error :',
+                              'File in error :',
                               style: TextStyle(
                                   color: AppColor.lightedMainColor2,
                                   fontSize: 18.0,
@@ -185,8 +185,7 @@ class _DetailPageState extends State<DetailPage>{
                             ),
                             Container(
                               margin: EdgeInsets.all(10),
-                              child: Text(
-                                file.isError ? 'Yes' : 'No',
+                              child: Text('Yes',
                                 style: TextStyle(
                                     color: AppColor.lightedMainColor2,
                                     fontSize: 14.0),
@@ -196,12 +195,12 @@ class _DetailPageState extends State<DetailPage>{
                         ),
                       ],
                     )
-                ),
+                ) : Container(),
                 Container(
                   alignment: Alignment.centerLeft,
                   padding: const EdgeInsets.fromLTRB(25, 20, 0, 10),
                   child: Text(
-                    'Treatment State :',
+                    'Proccesses applied :',
                     textAlign: TextAlign.left,
                     style: TextStyle(
                         color: AppColor.lightedMainColor2,

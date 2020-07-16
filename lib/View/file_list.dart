@@ -32,7 +32,7 @@ class _FileListPageState extends State<FileListPage>{
   @override
   Widget build(BuildContext context) {
 
-    PopupMenuButton makePopupButton(FileBasicInformation file) =>
+    PopupMenuButton makePopupButton(FileBasicInformation file, bool isFileShared) =>
         PopupMenuButton<FileAction>(
           elevation: 10,
           color: AppColor.lightedMainColor2,
@@ -45,10 +45,10 @@ class _FileListPageState extends State<FileListPage>{
               value: FileAction.share,
               child: Text('Share'),
             ),
-            const PopupMenuItem<FileAction>(
+            !isFileShared ? const PopupMenuItem<FileAction>(
               value: FileAction.delete,
               child: Text('Delete'),
-            )
+            ) : null
           ],
           onSelected: (FileAction result) async {
             switch (result) {
@@ -86,7 +86,7 @@ class _FileListPageState extends State<FileListPage>{
                       backgroundColor: AppColor.thirdColorVeryLight,
                       child: Icon(isFileShared ? Icons.share : Icons.insert_drive_file, color: AppColor.thirdColor, size: 30,),
                     ),
-                    makePopupButton(file)
+                    makePopupButton(file, isFileShared)
                   ],
                 ),
               ),
