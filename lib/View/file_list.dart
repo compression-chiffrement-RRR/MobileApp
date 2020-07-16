@@ -9,6 +9,7 @@ import 'package:mobileappflutter/View/file_downloader.dart';
 import 'package:shimmer/shimmer.dart';
 import 'file_detail.dart';
 import 'file_uploader.dart';
+import 'package:intl/intl.dart';
 
 enum FileAction { download, share, delete }
 
@@ -33,8 +34,8 @@ class _FileListPageState extends State<FileListPage>{
 
     PopupMenuButton makePopupButton(FileBasicInformation file) =>
         PopupMenuButton<FileAction>(
-          elevation: 5,
-          color: Color.fromRGBO(255, 255, 255, 0.95),
+          elevation: 10,
+          color: AppColor.lightedMainColor2,
           itemBuilder: (BuildContext context) => <PopupMenuEntry<FileAction>>[
             file.isError || !file.isTreated ? null : const PopupMenuItem<FileAction>(
               value: FileAction.download,
@@ -70,19 +71,8 @@ class _FileListPageState extends State<FileListPage>{
           },
         );
 
-    ListTile makeListTile(FileBasicInformation file) =>
-        ListTile(
-          dense: true,
-          enabled: true,
-          contentPadding: EdgeInsets.only(left: 10),
-          leading: Icon(Icons.insert_drive_file, color: Colors.white),
-          title: Text(
-            file.name,
-            style: TextStyle(color: Colors.white, fontSize: 12),
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
-          ),
-          trailing: makePopupButton(file),
+    Widget makeCardContent(FileBasicInformation file) =>
+        GestureDetector(
           onTap: () {
             Navigator.push(
                 context,
@@ -90,58 +80,53 @@ class _FileListPageState extends State<FileListPage>{
                     builder: (context) => DetailPage(fileBasicInformation: file)))
                 .then((value) => setState(() {}));
           },
-        );
-
-    Container makeCardContent(FileBasicInformation file) =>
-        Container(
-          //TODO : end design
-          /*color: AppColor.lightedMainColor2,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Center(
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 10, right: 5),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          child: Container(
+            decoration: BoxDecoration(
+                color: AppColor.lightedMainColor,
+                borderRadius: BorderRadius.all(Radius.circular(20))
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Center(
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 15, right: 5, top: 10),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        CircleAvatar(
+                            backgroundColor: AppColor.thirdColorVeryLight,
+                            child: Icon(Icons.insert_drive_file, color: AppColor.thirdColor, size: 30,),
+                        ),
+                        makePopupButton(file)
+                      ],
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 10.0, top: 15),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      Icon(Icons.insert_drive_file, color: Colors.blue,),
-                      makePopupButton(file)
+                      Text(
+                        file.name,
+                        style: TextStyle(color: AppColor.mainColor, fontSize: 20),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      SizedBox(height: 10,),
+                      Text(
+                        DateFormat('dd/MM/yyyy').format(file.creationDatetime),
+                        style: TextStyle(color: AppColor.mainColor, fontSize: 12),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      )
                     ],
                   ),
                 ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(left: 10.0),
-                child: Column(
-                  children: <Widget>[
-                    Text(
-                      file.name,
-                      style: TextStyle(color: Colors.white, fontSize: 20),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    Text(
-                      file.name,
-                      style: TextStyle(color: Colors.white, fontSize: 12),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    )
-                  ],
-                ),
-              ),
-            ],
-          ),*/
-          child: Column(
-            children: <Widget>[
-              SizedBox(height: 10,),
-              ClipRRect(
-                borderRadius: BorderRadius.circular(8.0),
-                child: Image.network("https://via.placeholder.com/150x100"),
-              ),
-              makeListTile(file)
-            ],
+              ],
+            ),
           ),
         );
 
@@ -184,7 +169,7 @@ class _FileListPageState extends State<FileListPage>{
                 files.addAll(fileAccount.userFilesCollaborator);
                 return GridView.count(
                     crossAxisCount: 2,
-                    childAspectRatio: (150 / 130),
+                    childAspectRatio: (150 / 120),
                     children: List.generate(files.length, (index) {
                       return Container(
                         height: 100,

@@ -16,6 +16,7 @@ class FileService extends FileServiceBase {
 
   @override
   Future<FileAdvancedInformation> getInformation(String fileUuid) {
+    print(fileUuid);
     return _fileRepository.getFileInformation(fileUuid);
   }
 

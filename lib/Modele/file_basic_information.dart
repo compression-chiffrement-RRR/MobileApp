@@ -7,8 +7,12 @@ class FileBasicInformation {
   bool isTemporary;
   String creationDate;
 
+  DateTime creationDatetime;
+
   FileBasicInformation(
-      {this.uuid, this.uuidParent, this.name, this.isTreated, this.isError, this.isTemporary, this.creationDate});
+      {this.uuid, this.uuidParent, this.name, this.isTreated, this.isError, this.isTemporary, this.creationDate, this.creationDatetime}) {
+    this.creationDatetime = DateTime.parse(this.creationDate).toLocal();
+  }
 
   factory FileBasicInformation.fromJson(Map<String, dynamic> json) {
     return FileBasicInformation(

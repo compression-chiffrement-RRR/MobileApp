@@ -1,10 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:mobileappflutter/Modele/file_advanced_information.dart';
 import 'package:mobileappflutter/Modele/file_basic_information.dart';
 import 'package:mobileappflutter/Service/file_service.dart';
 import 'package:mobileappflutter/Style/color.dart';
 import 'package:mobileappflutter/View/file_collaborator_manage.dart';
 import 'package:mobileappflutter/View/file_downloader.dart';
+import 'package:intl/intl.dart';
 
 
 enum FileAction { download, share, delete }
@@ -20,55 +22,54 @@ class DetailPage extends StatefulWidget {
 
 class _DetailPageState extends State<DetailPage>{
   final FileService _fileService = FileService();
-
+  final FileBasicInformation _fileBasicInformation;
+  Future<FileAdvancedInformation> _fileAdvancedInformation;
 
   _DetailPageState(this._fileBasicInformation);
-  final FileBasicInformation _fileBasicInformation;
-  //FileAdvancedInformation _fileAdvancedInformation = await _fileService.getInformation(_fileBasicInformation.uuid);
 
   @override
   void initState() {
-  super.initState();
+    _fileAdvancedInformation = _fileService.getInformation(_fileBasicInformation.uuid);
+    super.initState();
   }
-
 
   @override
   Widget build(BuildContext context) {
 
-    Container makeBody(FileBasicInformation file) =>
+    Container makeBody(FileAdvancedInformation file) =>
           Container(
             child: Column(
               children: <Widget>[
                 Padding(
                     padding: EdgeInsets.only(
                         left: 25.0, right: 25.0, top: 25.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      mainAxisSize: MainAxisSize.max,
-                      children: <Widget>[
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          mainAxisSize: MainAxisSize.min,
-                          children: <Widget>[
-                            Text(
-                              'FileName :',
-                              style: TextStyle(
-                                  color: AppColor.lightedMainColor2,
-                                  fontSize: 18.0,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                            Container(
-                              margin: EdgeInsets.all(20),
+                    child: Flexible(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          Text(
+                            'FileName :',
+                            style: TextStyle(
+                                color: AppColor.lightedMainColor2,
+                                fontSize: 18.0,
+                                fontWeight: FontWeight.bold),
+                          ),
+                          Flexible(
+                            child: Padding(
+                              padding: const EdgeInsets.all(10.0),
                               child: Text(
-                                _fileBasicInformation.name,
+                                file.name,
+                                maxLines: 3,
+                                overflow: TextOverflow.ellipsis,
                                 style: TextStyle(
                                     color: AppColor.lightedMainColor2,
-                                    fontSize: 14.0),
+                                    fontSize: 16.0),
                               ),
-                            )
-                          ],
-                        ),
-                      ],
+                            ),
+                          )
+                        ],
+                      ),
                     )
                 ),
                 Padding(
@@ -90,12 +91,12 @@ class _DetailPageState extends State<DetailPage>{
                                   fontWeight: FontWeight.bold),
                             ),
                             Container(
-                              margin: EdgeInsets.all(20),
+                              margin: EdgeInsets.all(10),
                               child: Text(
-                                _fileBasicInformation.creationDate.toString(),
+                                DateFormat('dd/MM/yyyy HH:mm:ss').format(file.creationDatetime),
                                 style: TextStyle(
                                     color: AppColor.lightedMainColor2,
-                                    fontSize: 14.0),
+                                    fontSize: 16.0),
                               ),
                             )
                           ],
@@ -122,15 +123,15 @@ class _DetailPageState extends State<DetailPage>{
                                   fontWeight: FontWeight.bold),
                             ),
                             Container(
-                              margin: EdgeInsets.all(20),
+                              margin: EdgeInsets.all(10),
                               child: Text(
 
-                                _fileBasicInformation.isTreated
+                                file.isTreated
                                     ? 'Treated'
                                     : 'Pending',
                                 style: TextStyle(
                                     color: AppColor.lightedMainColor2,
-                                    fontSize: 14.0),
+                                    fontSize: 16.0),
                               ),
                             )
                           ],
@@ -157,9 +158,9 @@ class _DetailPageState extends State<DetailPage>{
                                   fontWeight: FontWeight.bold),
                             ),
                             Container(
-                              margin: EdgeInsets.all(20),
+                              margin: EdgeInsets.all(10),
                               child: Text(
-                                _fileBasicInformation.isError ? 'Yes' : 'No',
+                                file.isError ? 'Yes' : 'No',
                                 style: TextStyle(
                                     color: AppColor.lightedMainColor2,
                                     fontSize: 14.0),
@@ -170,59 +171,99 @@ class _DetailPageState extends State<DetailPage>{
                       ],
                     )
                 ),
-                RaisedButton(
-                  textColor: Colors.white,
-                  color: AppColor.lightedMainColor,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
+                Container(
+                  alignment: Alignment.centerLeft,
+                  padding: const EdgeInsets.fromLTRB(25, 20, 0, 10),
+                  child: Text(
+                    'Treatment State :',
+                    textAlign: TextAlign.left,
+                    style: TextStyle(
+                        color: AppColor.lightedMainColor2,
+                        fontSize: 18.0,
+                        fontWeight: FontWeight.bold),
                   ),
-                  padding: EdgeInsets.symmetric(horizontal: 50, vertical: 13),
-                  child: Text("Download File", style: TextStyle(
-                      color: Colors.white, fontWeight: FontWeight.bold),),
-                  onPressed: () async {
-                    Navigator.push(context, MaterialPageRoute(
-                      builder: (context) => FileDownloaderPage(fileBasicInformation: file),
-                    )).then((value) => setState(() {}));
-                  },
                 ),
-                RaisedButton(
-                  textColor: Colors.white,
-                  color: AppColor.lightedMainColor,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
+                Expanded(
+                  flex: 3,
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(35, 0, 0, 0),
+                    child: ListView.builder(
+                      itemCount: file.processes.length,
+                      itemBuilder: (context, index) {
+                        return Container(
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(
+                              "${file.processes[index].order + 1} - ${file.processes[index].processType}",
+                              style: TextStyle(
+                                color: AppColor.lightedMainColor2,
+                                fontSize: 14.0),),
+                          ),
+                        );
+                      },
+                    ),
                   ),
-                  padding: EdgeInsets.symmetric(horizontal: 50, vertical: 13),
-                  child: Text("Share File", style: TextStyle(
-                      color: Colors.white, fontWeight: FontWeight.bold),),
-                  onPressed: () {
-                    Navigator.push(context, MaterialPageRoute(
-                        builder: (context) => FileCollaboratorManagePage(fileBasicInformation: file)
-                    )).then((value) => setState(() {}));
-                  },
                 ),
-                RaisedButton(
-                  textColor: Colors.white,
-                  color: AppColor.lightedMainColor,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: RaisedButton(
+                    textColor: Colors.white,
+                    color: AppColor.lightedMainColor,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    padding: EdgeInsets.symmetric(horizontal: 100, vertical: 13),
+                    child: Text("Download File", style: TextStyle(
+                        color: Colors.white, fontWeight: FontWeight.bold),),
+                    onPressed: () async {
+                      Navigator.push(context, MaterialPageRoute(
+                        builder: (context) => FileDownloaderPage(fileBasicInformation: file),
+                      )).then((value) => setState(() {}));
+                    },
                   ),
-                  padding: EdgeInsets.symmetric(horizontal: 50, vertical: 13),
-                  child: Text("Delete File", style: TextStyle(
-                      color: Colors.white, fontWeight: FontWeight.bold),),
-                  onPressed: () async {
-                    await _fileService.deleteFile(file);
-                    Navigator.of(context).pop();
-                    setState(() {
-
-                    });
-                  },
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: RaisedButton(
+                    textColor: Colors.white,
+                    color: AppColor.lightedMainColor,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    padding: EdgeInsets.symmetric(horizontal: 110, vertical: 13),
+                    child: Text("Share File", style: TextStyle(
+                        color: Colors.white, fontWeight: FontWeight.bold),),
+                    onPressed: () {
+                      Navigator.push(context, MaterialPageRoute(
+                          builder: (context) => FileCollaboratorManagePage(fileBasicInformation: file)
+                      )).then((value) => setState(() {}));
+                    },
+                  ),
+                ),
+                Expanded(child: Container(),),
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 30.0),
+                  child: RaisedButton(
+                    textColor: Colors.white,
+                    color: AppColor.redDeleteButton,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    padding: EdgeInsets.symmetric(horizontal: 110, vertical: 13),
+                    child: Text("Delete File", style: TextStyle(
+                        color: Colors.white, fontWeight: FontWeight.bold),),
+                    onPressed: () async {
+                      await _fileService.deleteFile(file);
+                      Navigator.of(context).pop();
+                    },
+                  ),
                 ),
               ],
             ),
           );
 
     final appBar = AppBar(
-      elevation: 20,
+      elevation: 10,
       brightness: Brightness.dark,
       backgroundColor: AppColor.mainColor,
       leading: IconButton(
@@ -236,7 +277,20 @@ class _DetailPageState extends State<DetailPage>{
     return Scaffold(
       backgroundColor: AppColor.mainColor,
       appBar: appBar,
-      body: makeBody(_fileBasicInformation),
+      body: FutureBuilder(
+        future: _fileAdvancedInformation,
+        builder: (context, snapshot) {
+          if (snapshot.data == null) {
+            return Container(
+              child: Center(
+                 child: Text("Loading..."),
+              )
+            );
+          } else {
+            return makeBody(snapshot.data);
+          }
+        },
+      ),
     );
 
   }

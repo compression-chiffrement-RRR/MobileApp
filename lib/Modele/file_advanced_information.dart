@@ -25,8 +25,13 @@ class FileAdvancedInformation implements FileBasicInformation {
 
   List<FileProcess> processes;
 
+  @override
+  DateTime creationDatetime;
+
   FileAdvancedInformation(
-      {this.uuid, this.uuidParent, this.name, this.isTreated, this.isError, this.isTemporary, this.processes, this.creationDate});
+      {this.uuid, this.uuidParent, this.name, this.isTreated, this.isError, this.isTemporary, this.processes, this.creationDate}) {
+    this.creationDatetime = DateTime.parse(this.creationDate).toLocal();
+  }
 
   factory FileAdvancedInformation.fromJson(Map<String, dynamic> json) {
     return FileAdvancedInformation(
