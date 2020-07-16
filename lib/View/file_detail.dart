@@ -33,6 +33,34 @@ class _DetailPageState extends State<DetailPage>{
     super.initState();
   }
 
+  Widget createListProcess(FileAdvancedInformation file) {
+    if (file.processes.length == 0) {
+      return Container(
+          child: Center(
+            child: Text("No process apply to this file"),
+          )
+      );
+    }
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(35, 0, 0, 0),
+      child: ListView.builder(
+        itemCount: file.processes.length,
+        itemBuilder: (context, index) {
+          return Container(
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(
+                "${file.processes[index].order + 1} - ${file.processes[index].processType}",
+                style: TextStyle(
+                    color: AppColor.lightedMainColor2,
+                    fontSize: 14.0),),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
 
@@ -43,33 +71,31 @@ class _DetailPageState extends State<DetailPage>{
                 Padding(
                     padding: EdgeInsets.only(
                         left: 25.0, right: 25.0, top: 25.0),
-                    child: Flexible(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        mainAxisSize: MainAxisSize.min,
-                        children: <Widget>[
-                          Text(
-                            'FileName :',
-                            style: TextStyle(
-                                color: AppColor.lightedMainColor2,
-                                fontSize: 18.0,
-                                fontWeight: FontWeight.bold),
-                          ),
-                          Flexible(
-                            child: Padding(
-                              padding: const EdgeInsets.all(10.0),
-                              child: Text(
-                                file.name,
-                                maxLines: 3,
-                                overflow: TextOverflow.ellipsis,
-                                style: TextStyle(
-                                    color: AppColor.lightedMainColor2,
-                                    fontSize: 16.0),
-                              ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.max,
+                      children: <Widget>[
+                        Text(
+                          'FileName :',
+                          style: TextStyle(
+                              color: AppColor.lightedMainColor2,
+                              fontSize: 18.0,
+                              fontWeight: FontWeight.bold),
+                        ),
+                        Flexible(
+                          child: Padding(
+                            padding: const EdgeInsets.all(10.0),
+                            child: Text(
+                              file.name,
+                              maxLines: 4,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                  color: AppColor.lightedMainColor2,
+                                  fontSize: 16.0),
                             ),
-                          )
-                        ],
-                      ),
+                          ),
+                        )
+                      ],
                     )
                 ),
                 Padding(
@@ -185,24 +211,7 @@ class _DetailPageState extends State<DetailPage>{
                 ),
                 Expanded(
                   flex: 3,
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(35, 0, 0, 0),
-                    child: ListView.builder(
-                      itemCount: file.processes.length,
-                      itemBuilder: (context, index) {
-                        return Container(
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text(
-                              "${file.processes[index].order + 1} - ${file.processes[index].processType}",
-                              style: TextStyle(
-                                color: AppColor.lightedMainColor2,
-                                fontSize: 14.0),),
-                          ),
-                        );
-                      },
-                    ),
-                  ),
+                  child: createListProcess(file)
                 ),
                 Padding(
                   padding: const EdgeInsets.all(8.0),

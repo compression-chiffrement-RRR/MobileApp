@@ -71,7 +71,51 @@ class _FileListPageState extends State<FileListPage>{
           },
         );
 
-    Widget makeCardContent(FileBasicInformation file) =>
+    Column makeCardContent(FileBasicInformation file) =>
+        Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Center(
+              child: Padding(
+                padding: const EdgeInsets.only(left: 15, right: 5, top: 10),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    CircleAvatar(
+                      backgroundColor: AppColor.thirdColorVeryLight,
+                      child: Icon(Icons.insert_drive_file, color: AppColor.thirdColor, size: 30,),
+                    ),
+                    makePopupButton(file)
+                  ],
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(left: 10.0, top: 15),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Text(
+                    file.name,
+                    style: TextStyle(color: AppColor.mainColor, fontSize: 20),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  SizedBox(height: 10,),
+                  Text(
+                    DateFormat('dd/MM/yyyy').format(file.creationDatetime),
+                    style: TextStyle(color: AppColor.mainColor, fontSize: 12),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  )
+                ],
+              ),
+            ),
+          ],
+        );
+
+    Widget makeCardBase(FileBasicInformation file) =>
         GestureDetector(
           onTap: () {
             Navigator.push(
@@ -85,48 +129,17 @@ class _FileListPageState extends State<FileListPage>{
                 color: AppColor.lightedMainColor2,
                 borderRadius: BorderRadius.all(Radius.circular(20))
             ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Center(
-                  child: Padding(
-                    padding: const EdgeInsets.only(left: 15, right: 5, top: 10),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: <Widget>[
-                        CircleAvatar(
-                            backgroundColor: AppColor.thirdColorVeryLight,
-                            child: Icon(Icons.insert_drive_file, color: AppColor.thirdColor, size: 30,),
-                        ),
-                        makePopupButton(file)
-                      ],
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(left: 10.0, top: 15),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Text(
-                        file.name,
-                        style: TextStyle(color: AppColor.mainColor, fontSize: 20),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      SizedBox(height: 10,),
-                      Text(
-                        DateFormat('dd/MM/yyyy').format(file.creationDatetime),
-                        style: TextStyle(color: AppColor.mainColor, fontSize: 12),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      )
-                    ],
-                  ),
-                ),
-              ],
-            ),
+            child: file.isError ? Shimmer.fromColors(
+                  baseColor: Colors.red[800],
+                  highlightColor: Colors.red[500],
+                  enabled: true,
+                  child: makeCardContent(file)
+              ) : !file.isTreated ? Shimmer.fromColors(
+                  baseColor: Colors.grey[500],
+                  highlightColor: Colors.grey[200],
+                  enabled: true,
+                  child: makeCardContent(file)
+              ) : makeCardContent(file),
           ),
         );
 
@@ -136,17 +149,7 @@ class _FileListPageState extends State<FileListPage>{
             elevation: 0.0,
             margin: new EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
             color: AppColor.mainColor,
-            child: file.isError ? Shimmer.fromColors(
-              baseColor: Colors.red[800],
-              highlightColor: Colors.red[500],
-              enabled: true,
-              child: makeCardContent(file)
-            ) : !file.isTreated ? Shimmer.fromColors(
-                baseColor: Colors.grey[500],
-                highlightColor: Colors.grey[200],
-                enabled: true,
-                child: makeCardContent(file)
-            ) : makeCardContent(file)
+            child: makeCardBase(file)
           ),
         );
 

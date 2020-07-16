@@ -38,7 +38,7 @@ class _FileCollaboratorManagePage extends State<FileCollaboratorManagePage> {
   }
 
   @override
-  Future<void> initState() {
+  void initState() {
     super.initState();
     _collaborators = _collaboratorService.getCollaborators(_fileBasicInformation);
   }
